@@ -17,5 +17,6 @@ public class CommunityPost {
   private Integer viewCount;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
+  private String authorName;  // 표시용 작성자 이름 (조인 결과)
   // getters/setters omitted
 }
