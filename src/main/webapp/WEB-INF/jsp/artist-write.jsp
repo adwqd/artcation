@@ -118,7 +118,7 @@
               </div>
               <div class="card-body p-4">
                 
-                <form action="<c:url value='/artist/write'/>" method="post">
+                <form action="<c:url value='/artist/write'/>" method="post" enctype="multipart/form-data">
                   <div class="mb-4">
                     <label for="title" class="form-label">
                       <i class="bi bi-card-heading"></i> 제목 <span class="text-danger">*</span>
@@ -145,6 +145,33 @@
                     <div class="form-text">
                       <i class="bi bi-lightbulb"></i> 
                       다른 예술인들과 지역 주민들에게 도움이 될 수 있는 내용을 포함해주세요.
+                    </div>
+                  </div>
+                  
+                  <div class="mb-4">
+                    <label for="imageFile" class="form-label">
+                      <i class="bi bi-image"></i> 이미지 첨부 <span class="text-muted">(선택사항)</span>
+                    </label>
+                    <input type="file" class="form-control" id="imageFile" name="imageFile" 
+                           accept="image/*" onchange="previewImage(this)">
+                    <div class="form-text">
+                      <i class="bi bi-info-circle"></i> 
+                      JPG, PNG, GIF, WebP 형식만 가능하며, 최대 10MB까지 업로드할 수 있습니다.
+                    </div>
+                    
+                    <!-- 이미지 미리보기 -->
+                    <div id="imagePreview" class="mt-3" style="display: none;">
+                      <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                          <span><i class="bi bi-eye"></i> 미리보기</span>
+                          <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeImage()">
+                            <i class="bi bi-x"></i> 제거
+                          </button>
+                        </div>
+                        <div class="card-body text-center">
+                          <img id="previewImg" src="" alt="미리보기" class="img-fluid" style="max-height: 300px;">
+                        </div>
+                      </div>
                     </div>
                   </div>
                   
@@ -260,6 +287,39 @@
         this.value = this.value.substring(0, max);
       }
     });
+
+    // 이미지 미리보기 함수
+    function previewImage(input) {
+      const file = input.files[0];
+      if (file) {
+        // 파일 크기 검사 (10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          alert('파일 크기는 10MB를 초과할 수 없습니다.');
+          input.value = '';
+          return;
+        }
+        
+        // 파일 형식 검사
+        if (!file.type.startsWith('image/')) {
+          alert('이미지 파일만 업로드 가능합니다.');
+          input.value = '';
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('previewImg').src = e.target.result;
+          document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+    
+    function removeImage() {
+      document.getElementById('imageFile').value = '';
+      document.getElementById('imagePreview').style.display = 'none';
+      document.getElementById('previewImg').src = '';
+    }
   </script>
 
 </body>

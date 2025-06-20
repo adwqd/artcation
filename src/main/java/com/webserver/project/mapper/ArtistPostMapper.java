@@ -28,13 +28,14 @@ public interface ArtistPostMapper {
     List<ArtistPost> findByArtistId(Integer artistId);
     
     // 새 게시글 작성
-    @Insert("INSERT INTO ArtistPosts (artist_id, title, content) " +
-            "VALUES (#{artistId}, #{title}, #{content})")
+    @Insert("INSERT INTO ArtistPosts (artist_id, title, content, image_url, image_name) " +
+            "VALUES (#{artistId}, #{title}, #{content}, #{imageUrl}, #{imageName})")
     @Options(useGeneratedKeys = true, keyProperty = "postId")
     void insert(ArtistPost artistPost);
     
     // 게시글 수정
     @Update("UPDATE ArtistPosts SET title = #{title}, content = #{content}, " +
+            "image_url = #{imageUrl}, image_name = #{imageName}, " +
             "updated_at = CURRENT_TIMESTAMP WHERE post_id = #{postId}")
     void update(ArtistPost artistPost);
     

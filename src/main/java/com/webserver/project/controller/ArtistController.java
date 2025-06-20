@@ -10,6 +10,8 @@ import com.webserver.project.mapper.ArtistPostMapper;
 import com.webserver.project.mapper.UserMapper;
 import com.webserver.project.model.ArtistPost;
 import com.webserver.project.service.ArtistPostService;
+import com.webserver.project.config.FileUploadService;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -25,6 +27,9 @@ public class ArtistController {
     
     @Autowired
     private ArtistPostService artistPostService;
+    
+    @Autowired
+    private FileUploadService fileUploadService;
 
     // 예술인 목록
     @GetMapping("/list")
@@ -58,12 +63,14 @@ public class ArtistController {
         }
         
         model.addAttribute("post", new ArtistPost());
-        return "artist/write";
+        return "artist-write";
     }
 
     // 예술인 기록 작성 처리
     @PostMapping("/write")
-    public String writePost(@ModelAttribute ArtistPost post, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String writePost(@ModelAttribute ArtistPost post, 
+                           @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                           HttpSession session, RedirectAttributes redirectAttributes) {
         try {
             // 로그인 체크
             if (!isLoggedIn(session)) {
@@ -79,14 +86,47 @@ public class ArtistController {
             
             // 세션에서 로그인된 사용자 ID 가져오기
             Integer userId = (Integer) session.getAttribute("userId");
+            String username = (String) session.getAttribute("username");
+            String displayName = (String) session.getAttribute("displayName");
+            
+            // 디버깅 로그
+            System.out.println("=== 기록 작성 디버깅 ===");
+            System.out.println("Session userId: " + userId);
+            System.out.println("Session username: " + username);
+            System.out.println("Session displayName: " + displayName);
+            System.out.println("Post title: " + post.getTitle());
+            System.out.println("Post content length: " + (post.getContent() != null ? post.getContent().length() : "null"));
+            
+            if (userId == null) {
+                redirectAttributes.addFlashAttribute("error", "세션에서 사용자 ID를 찾을 수 없습니다. 다시 로그인해주세요.");
+                return "redirect:/login";
+            }
+            
             post.setArtistId(userId);
+            System.out.println("Post artistId after setting: " + post.getArtistId());
+            
+            // 이미지 파일 업로드 처리
+            if (imageFile != null && !imageFile.isEmpty()) {
+                try {
+                    String imageUrl = fileUploadService.uploadImage(imageFile);
+                    post.setImageUrl(imageUrl);
+                    post.setImageName(imageFile.getOriginalFilename());
+                    System.out.println("Image uploaded: " + imageUrl);
+                } catch (Exception e) {
+                    System.out.println("이미지 업로드 실패: " + e.getMessage());
+                    redirectAttributes.addFlashAttribute("error", "이미지 업로드 실패: " + e.getMessage());
+                    return "redirect:/artist-write";
+                }
+            }
             
             artistPostService.add(post);
             redirectAttributes.addFlashAttribute("message", "예술인 기록이 성공적으로 작성되었습니다.");
             return "redirect:/blog/" + post.getPostId();
         } catch (Exception e) {
+            System.out.println("기록 작성 오류: " + e.getMessage());
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "기록 작성 중 오류가 발생했습니다: " + e.getMessage());
-            return "redirect:/artist/write";
+            return "redirect:/artist-write";
         }
     }
 
@@ -117,7 +157,7 @@ public class ArtistController {
             }
             
             model.addAttribute("post", post);
-            return "artist/edit";
+            return "artist-edit";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "기록 조회 중 오류가 발생했습니다: " + e.getMessage());
             return "redirect:/blog";
