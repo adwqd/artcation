@@ -6,16 +6,16 @@ import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface UserMapper {
-  @Select("SELECT * FROM Users WHERE username=#{username}")
+  @Select("SELECT user_id as userId, username, password, display_name as displayName, role, created_at as createdAt FROM Users WHERE username=#{username}")
   User findByUsername(String username);
 
-  @Select("SELECT * FROM Users WHERE user_id=#{userId}")
+  @Select("SELECT user_id as userId, username, password, display_name as displayName, role, created_at as createdAt FROM Users WHERE user_id=#{userId}")
   User findById(Integer userId);
 
-  @Select("SELECT * FROM Users WHERE role='artist' ORDER BY created_at DESC")
+  @Select("SELECT user_id as userId, username, password, display_name as displayName, role, created_at as createdAt FROM Users WHERE role='artist' ORDER BY created_at DESC")
   List<User> findAllArtists();
 
-  @Select("SELECT * FROM Users ORDER BY created_at DESC")
+  @Select("SELECT user_id as userId, username, password, display_name as displayName, role, created_at as createdAt FROM Users ORDER BY created_at DESC")
   List<User> findAll();
 
   @Insert("INSERT INTO Users(username,password,display_name,role) " +

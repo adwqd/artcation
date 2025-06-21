@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -94,6 +95,33 @@
     <!-- Blog Section -->
     <section class="blog section">
       <div class="container">
+        
+        <!-- Action Buttons -->
+        <div class="row mb-4">
+          <div class="col-12 text-center">
+            <c:choose>
+              <c:when test="${not empty sessionScope.loginUser && (sessionScope.role == 'artist' || sessionScope.role == 'admin')}">
+                <div class="alert alert-info d-inline-block me-3">
+                  <i class="bi bi-person-check-fill"></i>
+                  <strong>${sessionScope.displayName}님</strong> 환영합니다!
+                </div>
+                <a href="<c:url value='/artist/write'/>" class="btn btn-primary btn-lg">
+                  <i class="bi bi-pencil-square"></i> 새 기록 작성하기
+                </a>
+              </c:when>
+              <c:otherwise>
+                <div class="alert alert-warning d-inline-block me-3">
+                  <i class="bi bi-info-circle-fill"></i>
+                  예술인 기록을 작성하려면 로그인이 필요합니다
+                </div>
+                <a href="<c:url value='/login'/>" class="btn btn-outline-primary btn-lg">
+                  <i class="bi bi-box-arrow-in-right"></i> 로그인하기
+                </a>
+              </c:otherwise>
+            </c:choose>
+          </div>
+        </div>
+        
         <div class="row gy-4">
           
           <!-- Blog Posts -->
@@ -101,21 +129,46 @@
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="${status.index * 100}">
               <article class="blog-post">
                 <div class="post-img">
-                  <img src="<c:url value='${post.imageUrl}'/>" alt="${post.title}" class="img-fluid">
+                  <!-- 디버깅: 이미지 URL 확인 -->
+                  <!-- postId: ${post.postId}, imageUrl: ${post.imageUrl} -->
+                  <c:choose>
+                    <c:when test="${not empty post.imageUrl}">
+                      <img src="<c:url value='${post.imageUrl}'/>" alt="${post.title}" class="img-fluid">
+                    </c:when>
+                    <c:otherwise>
+                      <img src="<c:url value='/assets/img/blog/blog-1.jpg'/>" alt="${post.title}" class="img-fluid">
+                    </c:otherwise>
+                  </c:choose>
                 </div>
                 <div class="post-content">
                   <h3 class="post-title">
-                    <a href="<c:url value='/blog/${post.id}'/>">${post.title}</a>
+                    <a href="<c:url value='/blog/${post.postId}'/>">${post.title}</a>
                   </h3>
-                  <p class="post-excerpt">${post.excerpt}</p>
+                  <p class="post-excerpt">
+                    <c:choose>
+                      <c:when test="${fn:length(post.content) > 100}">
+                        ${fn:substring(post.content, 0, 100)}...
+                      </c:when>
+                      <c:otherwise>
+                        ${post.content}
+                      </c:otherwise>
+                    </c:choose>
+                  </p>
                   <div class="post-meta">
                     <span class="post-date">
                       <i class="bi bi-calendar"></i>
-                      <fmt:formatDate value="${post.createdAt}" pattern="yyyy년 MM월 dd일"/>
+                      <c:choose>
+                        <c:when test="${not empty post.createdAt}">
+                          ${post.createdAt.year}년 ${post.createdAt.monthValue}월 ${post.createdAt.dayOfMonth}일
+                        </c:when>
+                        <c:otherwise>
+                          2024년 06월 21일
+                        </c:otherwise>
+                      </c:choose>
                     </span>
                     <span class="post-author">
                       <i class="bi bi-person"></i>
-                      ${post.author}
+                      ${post.displayName}
                     </span>
                   </div>
                 </div>

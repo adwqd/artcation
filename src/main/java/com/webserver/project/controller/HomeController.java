@@ -13,6 +13,7 @@ import com.webserver.project.mapper.CommunityMapper;
 import com.webserver.project.mapper.CommentMapper;
 import com.webserver.project.mapper.PromotionsMapper;
 import com.webserver.project.model.ArtistPost;
+import com.webserver.project.model.CommunityPost;
 
 import java.util.Date;
 
@@ -66,7 +67,11 @@ public class HomeController {
         if (post != null) {
             artistPostMapper.increaseViewCount(id);
             model.addAttribute("post", post);
-            model.addAttribute("comments", commentMapper.findByArtistPost(id));
+            
+            // 댓글 목록과 개수
+            var comments = commentMapper.findByArtistPost(id);
+            model.addAttribute("comments", comments);
+            model.addAttribute("commentCount", comments != null ? comments.size() : 0);
         }
         return "blog-details";
     }

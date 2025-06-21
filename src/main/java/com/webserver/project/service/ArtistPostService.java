@@ -39,18 +39,30 @@ public class ArtistPostService {
 
   // 기록 작성
   public void add(ArtistPost post) {
+    System.out.println("=== ArtistPostService.add 시작 ===");
+    System.out.println("artistId: " + post.getArtistId());
+    System.out.println("title: " + post.getTitle());
+    System.out.println("content: " + (post.getContent() != null ? post.getContent().substring(0, Math.min(50, post.getContent().length())) + "..." : "null"));
+    System.out.println("imageUrl: " + post.getImageUrl());
+    System.out.println("imageName: " + post.getImageName());
+    
     // 필수 필드 검증
     if (post.getArtistId() == null) {
+      System.out.println("ERROR: 예술인 ID가 null입니다.");
       throw new IllegalArgumentException("예술인 ID가 필요합니다.");
     }
     if (post.getTitle() == null || post.getTitle().trim().isEmpty()) {
+      System.out.println("ERROR: 제목이 비어있습니다.");
       throw new IllegalArgumentException("제목은 필수입니다.");
     }
     if (post.getContent() == null || post.getContent().trim().isEmpty()) {
+      System.out.println("ERROR: 내용이 비어있습니다.");
       throw new IllegalArgumentException("내용은 필수입니다.");
     }
 
+    System.out.println("필수 필드 검증 완료. mapper.insert 호출 중...");
     mapper.insert(post);
+    System.out.println("mapper.insert 완료. postId: " + post.getPostId());
   }
 
   // 기록 수정

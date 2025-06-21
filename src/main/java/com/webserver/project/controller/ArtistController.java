@@ -9,6 +9,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.webserver.project.mapper.ArtistPostMapper;
 import com.webserver.project.mapper.UserMapper;
 import com.webserver.project.model.ArtistPost;
+import com.webserver.project.model.User;
 import com.webserver.project.service.ArtistPostService;
 import com.webserver.project.config.FileUploadService;
 import org.springframework.web.multipart.MultipartFile;
@@ -97,7 +98,20 @@ public class ArtistController {
             System.out.println("Post title: " + post.getTitle());
             System.out.println("Post content length: " + (post.getContent() != null ? post.getContent().length() : "null"));
             
+            // userId가 null인 경우, username으로 사용자 정보를 다시 조회
+            if (userId == null && username != null) {
+                System.out.println("userId가 null이므로 username으로 사용자 정보 조회: " + username);
+                User user = userMapper.findByUsername(username);
+                if (user != null) {
+                    userId = user.getUserId();
+                    session.setAttribute("userId", userId);
+                    session.setAttribute("displayName", user.getDisplayName());
+                    System.out.println("사용자 정보 재설정 완료 - userId: " + userId + ", displayName: " + user.getDisplayName());
+                }
+            }
+            
             if (userId == null) {
+                System.out.println("ERROR: userId를 찾을 수 없음. 로그인 페이지로 리다이렉트");
                 redirectAttributes.addFlashAttribute("error", "세션에서 사용자 ID를 찾을 수 없습니다. 다시 로그인해주세요.");
                 return "redirect:/login";
             }
@@ -119,7 +133,10 @@ public class ArtistController {
                 }
             }
             
+            System.out.println("artistPostService.add 호출 시작");
             artistPostService.add(post);
+            System.out.println("artistPostService.add 완료. postId: " + post.getPostId());
+            
             redirectAttributes.addFlashAttribute("message", "예술인 기록이 성공적으로 작성되었습니다.");
             return "redirect:/blog/" + post.getPostId();
         } catch (Exception e) {
