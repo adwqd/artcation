@@ -28,33 +28,90 @@
   const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
 
   function mobileNavToogle() {
-    document.querySelector('body').classList.toggle('mobile-nav-active');
-    mobileNavToggleBtn.classList.toggle('bi-list');
-    mobileNavToggleBtn.classList.toggle('bi-x');
+    console.log('모바일 네비게이션 토글 실행');
+    const body = document.querySelector('body');
+    const navmenu = document.querySelector('.navmenu');
+    
+    body.classList.toggle('mobile-nav-active');
+    
+    if (mobileNavToggleBtn) {
+      mobileNavToggleBtn.classList.toggle('bi-list');
+      mobileNavToggleBtn.classList.toggle('bi-x');
+    }
+    
+    const isActive = body.classList.contains('mobile-nav-active');
+    console.log('mobile-nav-active 상태:', isActive);
+    console.log('navmenu 요소:', navmenu);
+    
+    if (navmenu) {
+      console.log('navmenu 스타일:', window.getComputedStyle(navmenu).display);
+      console.log('navmenu z-index:', window.getComputedStyle(navmenu).zIndex);
+      console.log('navmenu position:', window.getComputedStyle(navmenu).position);
+      
+      // 강제로 스타일 적용
+      if (isActive) {
+        navmenu.style.position = 'fixed';
+        navmenu.style.top = '0';
+        navmenu.style.left = '0';
+        navmenu.style.width = '100vw';
+        navmenu.style.height = '100vh';
+        navmenu.style.backgroundColor = 'rgba(33, 37, 41, 0.95)';
+        navmenu.style.zIndex = '99999';
+        navmenu.style.display = 'block';
+        
+        const navmenuUl = navmenu.querySelector('ul');
+        if (navmenuUl) {
+          navmenuUl.style.display = 'block';
+          navmenuUl.style.visibility = 'visible';
+          navmenuUl.style.opacity = '1';
+          navmenuUl.style.position = 'absolute';
+          navmenuUl.style.top = '80px';
+          navmenuUl.style.left = '20px';
+          navmenuUl.style.right = '20px';
+          navmenuUl.style.background = 'rgba(255, 255, 255, 0.95)';
+          navmenuUl.style.borderRadius = '10px';
+          navmenuUl.style.padding = '20px';
+          navmenuUl.style.margin = '0';
+          navmenuUl.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+        }
+        console.log('모바일 메뉴 열림 - 강제 스타일 적용');
+      } else {
+        navmenu.style.cssText = '';
+        const navmenuUl = navmenu.querySelector('ul');
+        if (navmenuUl) {
+          navmenuUl.style.cssText = '';
+        }
+        console.log('모바일 메뉴 닫힘 - 스타일 초기화');
+      }
+    }
   }
   
   if (mobileNavToggleBtn) {
-    // 클릭 이벤트
-    mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+    console.log('모바일 토글 버튼 찾음:', mobileNavToggleBtn);
     
-    // 터치 이벤트 (모바일 지원)
-    mobileNavToggleBtn.addEventListener('touchstart', function(e) {
+    // 기존 이벤트 리스너 제거
+    mobileNavToggleBtn.replaceWith(mobileNavToggleBtn.cloneNode(true));
+    const newMobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
+    
+    // 클릭 이벤트만 추가
+    newMobileNavToggleBtn.addEventListener('click', function(e) {
       e.preventDefault();
+      e.stopPropagation();
+      console.log('모바일 토글 버튼 클릭됨');
       mobileNavToogle();
     });
     
-    // 키보드 접근성
-    mobileNavToggleBtn.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        mobileNavToogle();
-      }
-    });
-    
     // 포커스 가능하도록 설정
-    mobileNavToggleBtn.setAttribute('tabindex', '0');
-    mobileNavToggleBtn.setAttribute('role', 'button');
-    mobileNavToggleBtn.setAttribute('aria-label', '모바일 메뉴 토글');
+    newMobileNavToggleBtn.setAttribute('tabindex', '0');
+    newMobileNavToggleBtn.setAttribute('role', 'button');
+    newMobileNavToggleBtn.setAttribute('aria-label', '모바일 메뉴 토글');
+    
+    // 스타일 강제 적용
+    newMobileNavToggleBtn.style.cursor = 'pointer';
+    newMobileNavToggleBtn.style.userSelect = 'none';
+    newMobileNavToggleBtn.style.pointerEvents = 'auto';
+  } else {
+    console.error('모바일 토글 버튼을 찾을 수 없습니다');
   }
 
   /**
@@ -66,7 +123,6 @@
         mobileNavToogle();
       }
     });
-
   });
 
   /**
@@ -131,9 +187,17 @@
   /**
    * Initiate glightbox
    */
-  const glightbox = GLightbox({
-    selector: '.glightbox'
-  });
+  try {
+    if (typeof GLightbox !== 'undefined') {
+      const glightbox = GLightbox({
+        selector: '.glightbox'
+      });
+    } else {
+      console.warn('GLightbox가 로드되지 않았습니다.');
+    }
+  } catch (error) {
+    console.warn('GLightbox 초기화 중 오류 발생:', error);
+  }
 
   /**
    * Init isotope layout and filters

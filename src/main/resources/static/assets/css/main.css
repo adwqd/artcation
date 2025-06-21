@@ -305,6 +305,37 @@ h6 {
     margin-right: 10px;
     cursor: pointer;
     transition: color 0.3s;
+    padding: 15px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 4px;
+    background: transparent;
+    border: none !important;
+    position: relative !important;
+    z-index: 9999 !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .mobile-nav-toggle:hover,
+  .mobile-nav-toggle:focus,
+  .mobile-nav-toggle:active {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    outline: none !important;
+  }
+
+  /* 모든 페이지에서 모바일 토글 버튼 색상 통일 */
+  body:not(.index-page) .mobile-nav-toggle {
+    color: #ffffff !important;
+  }
+
+  body:not(.index-page) .mobile-nav-toggle:hover,
+  body:not(.index-page) .mobile-nav-toggle:focus,
+  body:not(.index-page) .mobile-nav-toggle:active {
+    background-color: rgba(255, 255, 255, 0.1) !important;
   }
 
   .navmenu {
@@ -394,32 +425,6 @@ h6 {
   .navmenu .dropdown>.dropdown-active {
     display: block;
     background-color: rgba(33, 37, 41, 0.03);
-  }
-
-  .mobile-nav-active {
-    overflow: hidden;
-  }
-
-  .mobile-nav-active .mobile-nav-toggle {
-    color: #fff;
-    position: absolute;
-    font-size: 32px;
-    top: 15px;
-    right: 15px;
-    margin-right: 0;
-    z-index: 9999;
-  }
-
-  .mobile-nav-active .navmenu {
-    position: fixed;
-    overflow: hidden;
-    inset: 0;
-    background: rgba(33, 37, 41, 0.8);
-    transition: 0.3s;
-  }
-
-  .mobile-nav-active .navmenu>ul {
-    display: block;
   }
 }
 
@@ -2626,4 +2631,98 @@ body:not(.index-page) .navmenu .active {
 .community-page .navmenu .active {
   background-color: #ef6603 !important;
   color: #ffffff !important;
+}
+
+/*--------------------------------------------------------------
+# Mobile Navigation (항상 적용)
+--------------------------------------------------------------*/
+.mobile-nav-active {
+  overflow: hidden;
+}
+
+.mobile-nav-active .mobile-nav-toggle {
+  color: #fff !important;
+  position: fixed !important;
+  font-size: 32px;
+  top: 15px !important;
+  right: 15px !important;
+  margin-right: 0;
+  z-index: 999999 !important;
+  padding: 15px !important;
+  min-width: 50px !important;
+  min-height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.mobile-nav-active .mobile-nav-toggle:hover,
+.mobile-nav-active .mobile-nav-toggle:focus,
+.mobile-nav-active .mobile-nav-toggle:active {
+  background: rgba(255, 255, 255, 0.3) !important;
+  outline: none !important;
+}
+
+.mobile-nav-active .navmenu {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(33, 37, 41, 0.95) !important;
+  z-index: 99999 !important;
+  display: block !important;
+  overflow-y: auto !important;
+}
+
+.mobile-nav-active .navmenu>ul {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: absolute !important;
+  top: 80px !important;
+  left: 20px !important;
+  right: 20px !important;
+  bottom: 20px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 10px !important;
+  padding: 20px !important;
+  margin: 0 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+  z-index: 99999 !important;
+  list-style: none !important;
+}
+
+body.mobile-nav-active .navmenu a,
+body.mobile-nav-active .navmenu li a,
+.mobile-nav-active .navmenu a {
+  color: #212529 !important;
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  padding: 15px 0 !important;
+  border-bottom: 1px solid #eee !important;
+  display: block !important;
+  text-decoration: none !important;
+  background: none !important;
+}
+
+body.mobile-nav-active .navmenu a:hover,
+body.mobile-nav-active .navmenu li a:hover,
+body.mobile-nav-active .navmenu a.active,
+body.mobile-nav-active .navmenu li a.active,
+.mobile-nav-active .navmenu a:hover,
+.mobile-nav-active .navmenu a.active {
+  color: #ff6b35 !important;
+  background: none !important;
+}
+
+body.mobile-nav-active .navmenu li:last-child a,
+.mobile-nav-active .navmenu li:last-child a {
+  border-bottom: none !important;
 }
