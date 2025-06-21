@@ -34,7 +34,27 @@
   }
   
   if (mobileNavToggleBtn) {
+    // 클릭 이벤트
     mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+    
+    // 터치 이벤트 (모바일 지원)
+    mobileNavToggleBtn.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      mobileNavToogle();
+    });
+    
+    // 키보드 접근성
+    mobileNavToggleBtn.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        mobileNavToogle();
+      }
+    });
+    
+    // 포커스 가능하도록 설정
+    mobileNavToggleBtn.setAttribute('tabindex', '0');
+    mobileNavToggleBtn.setAttribute('role', 'button');
+    mobileNavToggleBtn.setAttribute('aria-label', '모바일 메뉴 토글');
   }
 
   /**

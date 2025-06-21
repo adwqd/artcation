@@ -31,6 +31,82 @@
   <!-- Main CSS File -->
   <link href="<c:url value='/assets/css/main.css'/>" rel="stylesheet">
 
+  <!-- Hero Background Images -->
+  <style>
+    .hero-bg-1 {
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('<c:url value='/assets/img/artist/김유라1.jpg'/>') center/cover;
+      min-height: 100vh;
+    }
+    .hero-bg-2 {
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('<c:url value='/assets/img/artist/이경민1.jpg'/>') center/cover;
+      min-height: 100vh;
+    }
+    .hero-bg-3 {
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('<c:url value='/assets/img/artist/정은영1.jpg'/>') center/cover;
+      min-height: 100vh;
+    }
+    
+    /* 예술인 호버 효과 */
+    .team-member {
+      position: relative;
+      overflow: hidden;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .team-member:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+    
+    .team-member .member-img {
+      position: relative;
+      overflow: hidden;
+      border-radius: 15px 15px 0 0;
+    }
+    
+    .team-member .member-img img {
+      transition: all 0.4s ease;
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+    
+    .team-member:hover .member-img img {
+      transform: scale(1.05);
+    }
+    
+    .team-member .member-info {
+      padding: 20px;
+      text-align: center;
+      background: white;
+      border-radius: 0 0 15px 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .team-member .member-info h4 {
+      margin-bottom: 8px;
+      font-size: 20px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .team-member .member-info span {
+      font-size: 14px;
+      color: #666;
+      transition: all 0.3s ease;
+    }
+    
+    /* 반응형 */
+    @media (max-width: 768px) {
+      .team-member .member-img img {
+        height: 250px;
+      }
+    }
+  </style>
+
   <!-- =======================================================
   * Template Name: Selecao
   * Template URL: https://bootstrapmade.com/selecao-bootstrap-template/
@@ -54,10 +130,9 @@
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="#hero" class="active">홈</a></li>
-          <li><a href="#about">예술인 소개</a></li>
+          <li><a href="#about">아트케이션 고성이란?</a></li>
           <li><a href="<c:url value='/blog'/>">예술인 기록</a></li>
           <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
-          <li><a href="#promotions">홍보 및 공지</a></li>
           
           <c:choose>
             <c:when test="${not empty sessionScope.loginUser}">
@@ -87,29 +162,33 @@
       <div id="hero-carousel" data-bs-interval="5000" class="container carousel carousel-fade" data-bs-ride="carousel">
 
         <!-- Slide 1 -->
-        <div class="carousel-item active">
+        <div class="carousel-item active hero-bg-1">
           <div class="carousel-container">
             <h2 class="animate__animated animate__fadeInDown">아트케이션 고성에 오신 것을 <span>환영합니다</span></h2>
-            <p class="animate__animated animate__fadeInUp">고성 지역 예술인들의 창작 활동과 작품을 공유하고, 서로의 경험을 나누며 함께 성장하는 온라인 소통 공간입니다. 다양한 장르의 예술인들이 모여 새로운 영감을 얻고 협력할 수 있는 플랫폼을 제공합니다.</p>
+            <p class="animate__animated animate__fadeInUp">
+              <strong style="color: #ff6b35;">도시소멸 위기를 예술로 극복하는</strong> 특별한 프로그램입니다.<br>
+              일상에서 벗어나 예술적 영감을 위한 휴식과 창작, 모두가 한번쯤 꿈꿔 온 라이프를 고성에서 경험해보세요. 
+              나만의 시간, 나만의 공간에서 조용하고 차분하게 새로운 발견을 도와줄 열두개의 '예술가의 방'이 여러분을 기다립니다.
+            </p>
             <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">더 알아보기</a>
           </div>
         </div>
 
         <!-- Slide 2 -->
-        <div class="carousel-item">
+        <div class="carousel-item hero-bg-2">
           <div class="carousel-container">
-            <h2 class="animate__animated animate__fadeInDown">예술인 기록을 <span>공유하세요</span></h2>
-            <p class="animate__animated animate__fadeInUp">작품 제작 과정, 전시 후기, 창작 노하우 등 예술인들의 소중한 경험과 이야기를 기록하고 공유할 수 있습니다. 여러분의 예술적 여정을 다른 예술인들과 함께 나누어보세요.</p>
-            <a href="<c:url value='/blog'/>" class="btn-get-started animate__animated animate__fadeInUp scrollto">예술인 기록 보기</a>
+            <h2 class="animate__animated animate__fadeInDown">예술하기 좋은 <span>고성</span></h2>
+            <p class="animate__animated animate__fadeInUp">푸른 바다가 보이는 아침, 빛나는 석호를 거니는 점심, 포근한 산자락 품에서 잠드는 밤. 모든 일상이 아름다운 사는 게 예술인 고성에서 창작의 영감을 얻어보세요.</p>
+            <a href="#goseong" class="btn-get-started animate__animated animate__fadeInUp scrollto">고성 알아보기</a>
           </div>
         </div>
 
         <!-- Slide 3 -->
-        <div class="carousel-item">
+        <div class="carousel-item hero-bg-3">
           <div class="carousel-container">
-            <h2 class="animate__animated animate__fadeInDown">커뮤니티에서 <span>소통하세요</span></h2>
-            <p class="animate__animated animate__fadeInUp">질문과 답변, 정보 공유, 작품 피드백 등 다양한 주제로 예술인들과 소통할 수 있는 커뮤니티 공간입니다. 함께 성장하고 발전할 수 있는 네트워킹의 기회를 만들어보세요.</p>
-            <a href="<c:url value='/community'/>" class="btn-get-started animate__animated animate__fadeInUp scrollto">커뮤니티 참여하기</a>
+            <h2 class="animate__animated animate__fadeInDown">함께하는 <span>예술인들</span></h2>
+            <p class="animate__animated animate__fadeInUp">시각, 건축, 디자인, 공예, 만화, 문학, 사진, 음악, 영화 등 다양한 분야의 예술인 12명이 고성에서 창작 활동을 펼치고 있습니다. 그들의 이야기와 작품을 만나보세요.</p>
+            <a href="#artists" class="btn-get-started animate__animated animate__fadeInUp scrollto">예술인 만나기</a>
           </div>
         </div>
 
@@ -145,8 +224,8 @@
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>예술인 소개</h2>
-        <p>아트케이션 고성이 함께하는 예술인들</p>
+        <h2>아트케이션 고성이란?</h2>
+        <p><strong>도시소멸 위기를 극복하기 위한 예술적 해답</strong></p>
       </div><!-- End Section Title -->
 
       <div class="container">
@@ -154,21 +233,35 @@
         <div class="row gy-4">
 
           <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
+            <div class="alert alert-info mb-4" style="border-left: 4px solid #ff6b35; background: linear-gradient(135deg, #fff8f0 0%, #ffeee6 100%);">
+              <h5 class="mb-2" style="color: #ff6b35;"><i class="bi bi-exclamation-triangle-fill"></i> 도시소멸 위기 대응 프로그램</h5>
+              <p class="mb-0" style="color: #666;">아트케이션 고성은 인구 감소와 지역 소멸 위기에 직면한 고성군에 새로운 활력을 불어넣기 위해 시작된 문화예술 프로그램입니다.</p>
+            </div>
+            
             <p>
-              아트케이션 고성은 고성 지역의 다양한 장르 예술인들이 모인 창작 공동체입니다. 
-              미술, 음악, 문학, 공연 등 각 분야의 전문 예술인들이 함께 활동하며 지역 문화 발전에 기여하고 있습니다.
+              만 45세 이하 청년, 신진예술인들을 위한 창작 레지던시 프로그램으로, 
+              <strong>예술의 힘으로 지역에 새로운 생명력을 불어넣고</strong> 지속가능한 지역 발전 모델을 만들어가고 있습니다.
             </p>
             <ul>
-              <li><i class="bi bi-check2-circle"></i> <span>다양한 장르의 전문 예술인들과의 네트워킹</span></li>
-              <li><i class="bi bi-check2-circle"></i> <span>창작 경험과 노하우 공유를 통한 성장</span></li>
-              <li><i class="bi bi-check2-circle"></i> <span>지역 문화 발전을 위한 협력 프로젝트 진행</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span>활동비 100만원 지원</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span>거주공간 제공 및 예술인 비평워크숍</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span>농촌생활 및 주민연계 프로그램 제공</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span>레지던시 명파 창작지원금(400만원 이내)</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span>아트케이션 페스티벌 참여 기회</span></li>
             </ul>
           </div>
 
           <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-            <p>우리는 예술인 개개인의 창작 활동을 지원하고, 서로의 작품과 경험을 나누며 함께 성장하는 것을 목표로 합니다. 
-            또한 고성 지역의 문화적 특색을 살린 다양한 예술 프로젝트를 기획하고 실행하여 지역 사회와 소통하고 있습니다.</p>
-            <a href="<c:url value='/blog'/>" class="read-more"><span>예술인 기록 보기</span><i class="bi bi-arrow-right"></i></a>
+            <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+              <div class="card-body p-4">
+                <h5 class="card-title" style="color: #ff6b35;"><i class="bi bi-lightbulb-fill"></i> 예술로 살리는 지역</h5>
+                <p class="card-text">예술인들이 고성에 머물며 지역 주민들과 교류하고, 지역의 이야기를 예술 작품으로 재탄생시키면서 <strong>문화적 활력과 경제적 효과</strong>를 동시에 창출합니다.</p>
+              </div>
+            </div>
+            
+            <p>이곳 한 달 살기의 씨앗심기가 레지던시의 새싹이 되어, 여러분의 축제에서 꽃으로 활짝 피어나길 바랍니다. 
+            시각, 건축, 디자인, 공예, 만화, 문학, 사진, 음악, 영화 등 다양한 분야의 예술인들이 <strong>고성의 지속가능한 미래</strong>를 위한 새로운 창작의 가능성을 발견하고 있습니다.</p>
+            <a href="#participation" class="read-more"><span>참여방법 알아보기</span><i class="bi bi-arrow-right"></i></a>
           </div>
 
         </div>
@@ -177,175 +270,88 @@
 
     </section><!-- /About Section -->
 
-    <!-- Features Section -->
-    <section id="features" class="features section">
-
-      <div class="container">
-
-        <ul class="nav nav-tabs row  d-flex" data-aos="fade-up" data-aos-delay="100">
-          <li class="nav-item col-3">
-            <a class="nav-link active show" data-bs-toggle="tab" data-bs-target="#features-tab-1">
-              <i class="bi bi-binoculars"></i>
-              <h4 class="d-none d-lg-block">Modi sit est dela pireda nest</h4>
-            </a>
-          </li>
-          <li class="nav-item col-3">
-            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-2">
-              <i class="bi bi-box-seam"></i>
-              <h4 class="d-none d-lg-block">Unde praesenti mara setra le</h4>
-            </a>
-          </li>
-          <li class="nav-item col-3">
-            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-3">
-              <i class="bi bi-brightness-high"></i>
-              <h4 class="d-none d-lg-block">Pariatur explica nitro dela</h4>
-            </a>
-          </li>
-          <li class="nav-item col-3">
-            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#features-tab-4">
-              <i class="bi bi-command"></i>
-              <h4 class="d-none d-lg-block">Nostrum qui dile node</h4>
-            </a>
-          </li>
-        </ul><!-- End Tab Nav -->
-
-        <div class="tab-content" data-aos="fade-up" data-aos-delay="200">
-
-          <div class="tab-pane fade active show" id="features-tab-1">
-            <div class="row">
-              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-                <h3>Voluptatem dignissimos provident quasi corporis voluptates sit assumenda.</h3>
-                <p class="fst-italic">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua.
-                </p>
-                <ul>
-                  <li><i class="bi bi-check2-all"></i>
-                    <spab>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</spab>
-                  </li>
-                  <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit</span>.</li>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</span></li>
-                </ul>
-                <p>
-                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                  culpa qui officia deserunt mollit anim id est laborum
-                </p>
-              </div>
-              <div class="col-lg-6 order-1 order-lg-2 text-center">
-                <img src="<c:url value='/assets/img/working-1.jpg'/>" alt="" class="img-fluid">
-              </div>
-            </div>
-          </div><!-- End Tab Content Item -->
-
-          <div class="tab-pane fade" id="features-tab-2">
-            <div class="row">
-              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-                <h3>Neque exercitationem debitis soluta quos debitis quo mollitia officia est</h3>
-                <p>
-                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                  culpa qui officia deserunt mollit anim id est laborum
-                </p>
-                <p class="fst-italic">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua.
-                </p>
-                <ul>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Provident mollitia neque rerum asperiores dolores quos qui a. Ipsum neque dolor voluptate nisi sed.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</span></li>
-                </ul>
-              </div>
-              <div class="col-lg-6 order-1 order-lg-2 text-center">
-                <img src="<c:url value='/assets/img/working-2.jpg'/>" alt="" class="img-fluid">
-              </div>
-            </div>
-          </div><!-- End Tab Content Item -->
-
-          <div class="tab-pane fade" id="features-tab-3">
-            <div class="row">
-              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-                <h3>Voluptatibus commodi ut accusamus ea repudiandae ut autem dolor ut assumenda</h3>
-                <p>
-                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                  culpa qui officia deserunt mollit anim id est laborum
-                </p>
-                <ul>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Provident mollitia neque rerum asperiores dolores quos qui a. Ipsum neque dolor voluptate nisi sed.</span></li>
-                </ul>
-                <p class="fst-italic">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua.
-                </p>
-              </div>
-              <div class="col-lg-6 order-1 order-lg-2 text-center">
-                <img src="<c:url value='/assets/img/working-3.jpg'/>" alt="" class="img-fluid">
-              </div>
-            </div>
-          </div><!-- End Tab Content Item -->
-
-          <div class="tab-pane fade" id="features-tab-4">
-            <div class="row">
-              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
-                <h3>Omnis fugiat ea explicabo sunt dolorum asperiores sequi inventore rerum</h3>
-                <p>
-                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                  culpa qui officia deserunt mollit anim id est laborum
-                </p>
-                <p class="fst-italic">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                  magna aliqua.
-                </p>
-                <ul>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
-                  <li><i class="bi bi-check2-all"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</span></li>
-                </ul>
-              </div>
-              <div class="col-lg-6 order-1 order-lg-2 text-center">
-                <img src="<c:url value='/assets/img/working-4.jpg'/>" alt="" class="img-fluid">
-              </div>
-            </div>
-          </div><!-- End Tab Content Item -->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Features Section -->
-
-    <!-- Call To Action Section -->
-    <section id="call-to-action" class="call-to-action section dark-background">
-
-      <div class="container">
-
-        <div class="row" data-aos="zoom-in" data-aos-delay="100">
-          <div class="col-xl-9 text-center text-xl-start">
-            <h3>아트케이션 고성에 참여하세요</h3>
-            <p>고성 지역의 예술인이시라면 누구나 아트케이션 고성의 멤버가 될 수 있습니다. 여러분의 창작 이야기를 공유하고, 다른 예술인들과 소통하며 함께 성장해나가세요.</p>
-          </div>
-          <div class="col-xl-3 cta-btn-container text-center">
-            <a class="cta-btn align-middle" href="<c:url value='/community'/>">지금 참여하기</a>
-          </div>
-        </div>
-
-      </div>
-
-    </section><!-- /Call To Action Section -->
-
-    <!-- Promotions Section -->
-    <section id="promotions" class="services section">
+    <!-- Goseong Section -->
+    <section id="goseong" class="about section light-background">
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>홍보 및 공지</h2>
-        <p>아트케이션 고성의 다양한 활동과 소식</p>
+        <h2>고성은 어떤 곳인가</h2>
+        <p>예술적 영감이 넘치는 자연의 보고</p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row gy-4">
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card h-100 border-0 shadow-sm">
+              <div class="card-body text-center p-4">
+                <div class="icon mb-3">
+                  <i class="bi bi-tree" style="font-size: 3rem; color: #28a745;"></i>
+                </div>
+                <h4>예술하기 좋은 고성</h4>
+                <p class="text-muted">면적 70%의 숲, 동해안 가장 긴 해변의 생태, DMZ와 금강산. 숨겨진 이야기가 예술적 영감이 되는 곳입니다.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="card h-100 border-0 shadow-sm">
+              <div class="card-body text-center p-4">
+                <div class="icon mb-3">
+                  <i class="bi bi-sun" style="font-size: 3rem; color: #ffc107;"></i>
+                </div>
+                <h4>사는 게 예술인 고성</h4>
+                <p class="text-muted">푸른 바다가 보이는 아침, 빛나는 석호를 거니는 점심, 포근한 산자락 품에서 잠드는 밤. 모든 일상이 아름다운 곳입니다.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card h-100 border-0 shadow-sm">
+              <div class="card-body text-center p-4">
+                <div class="icon mb-3">
+                  <i class="bi bi-camera" style="font-size: 3rem; color: #17a2b8;"></i>
+                </div>
+                <h4>여행이 예술인 고성</h4>
+                <p class="text-muted">아름다운 산과 호수, 바다가 어우러진 생태의 보고. 풍부한 바다 자원과 DMZ를 간직한 평화의 보고입니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="400">
+            <h3>고성의 자연환경</h3>
+            <p>고성은 동해안의 아름다운 자연환경을 자랑하는 곳입니다. 전체 면적의 70%가 숲으로 이루어져 있어 청정한 공기와 함께 창작 활동에 집중할 수 있는 환경을 제공합니다.</p>
+            <ul>
+              <li><i class="bi bi-check2-circle"></i> <span>동해안 가장 긴 해변과 아름다운 석호</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span>DMZ 접경지역의 독특한 생태계</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span>금강산과 이어지는 웅장한 산맥</span></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="500">
+            <h3>문화적 특색</h3>
+            <p>고성은 다채로운 이야기가 넘치는 곳입니다. 분단의 아픔과 평화의 희망이 공존하며, 풍부한 바다 자원과 전통 문화가 어우러져 예술인들에게 무한한 영감을 제공합니다.</p>
+            <ul>
+              <li><i class="bi bi-check2-circle"></i> <span>대한민국 평화의 상징적 의미</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span>동해안 씨푸드의 보고</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span>전통과 현대가 조화로운 문화</span></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Goseong Section -->
+
+    <!-- Activities Section -->
+    <section id="activities" class="services section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>아트케이션 고성 활동</h2>
+        <p>참여하면 어떤 활동을 하게 될까요?</p>
       </div><!-- End Section Title -->
 
       <div class="container">
@@ -353,192 +359,345 @@
         <div class="row gy-4">
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="service-item  position-relative">
+            <div class="service-item position-relative">
               <div class="icon">
-                <i class="bi bi-palette" style="color: #0dcaf0;"></i>
+                <i class="bi bi-house-heart" style="color: #0dcaf0;"></i>
               </div>
-              <a href="<c:url value='/blog'/>" class="stretched-link">
-                <h3>예술 작품 전시</h3>
-              </a>
-              <p>예술인들의 다양한 작품을 온라인으로 전시하고 공유할 수 있는 공간을 제공합니다. 미술, 조각, 사진 등 다양한 장르의 작품을 감상해보세요.</p>
+              <h3>거주공간 제공</h3>
+              <p>나만의 시간, 나만의 공간에서 조용하고 차분하게 창작에 집중할 수 있는 '예술가의 방'을 제공합니다.</p>
             </div>
-          </div><!-- End Service Item -->
+          </div>
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
             <div class="service-item position-relative">
               <div class="icon">
-                <i class="bi bi-calendar4-week" style="color: #fd7e14;"></i>
+                <i class="bi bi-chat-dots" style="color: #fd7e14;"></i>
               </div>
-              <a href="<c:url value='/starter'/>" class="stretched-link">
-                <h3>워크샵 및 행사</h3>
-              </a>
-              <p>정기적으로 개최되는 예술 워크샵, 세미나, 전시회 등의 일정과 참여 방법을 안내합니다. 함께 배우고 성장할 수 있는 기회를 놓치지 마세요.</p>
+              <h3>예술인 비평워크숍</h3>
+              <p>비평가, 예술감독 등 전문가들의 컨설팅을 통해 작품에 대한 깊이 있는 피드백을 받을 수 있습니다.</p>
             </div>
-          </div><!-- End Service Item -->
+          </div>
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
             <div class="service-item position-relative">
               <div class="icon">
-                <i class="bi bi-chat-text" style="color: #20c997;"></i>
+                <i class="bi bi-people" style="color: #20c997;"></i>
               </div>
-              <a href="<c:url value='/community'/>" class="stretched-link">
-                <h3>멘토링 프로그램</h3>
-              </a>
-              <p>경험이 풍부한 선배 예술인들이 신진 예술인들에게 창작 노하우와 경험을 전수하는 멘토링 프로그램을 운영합니다.</p>
+              <h3>농촌생활 및 주민연계</h3>
+              <p>고성 지역 주민들과의 교류를 통해 지역 문화를 체험하고 새로운 영감을 얻을 수 있는 프로그램을 제공합니다.</p>
             </div>
-          </div><!-- End Service Item -->
+          </div>
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
             <div class="service-item position-relative">
               <div class="icon">
-                <i class="bi bi-people" style="color: #df1529;"></i>
+                <i class="bi bi-lightbulb" style="color: #df1529;"></i>
               </div>
-              <a href="<c:url value='/community'/>" class="stretched-link">
-                <h3>협력 프로젝트</h3>
-              </a>
-              <p>다양한 장르의 예술인들이 함께 참여하는 융복합 프로젝트를 기획하고 진행합니다. 새로운 창작 영역을 탐색해보세요.</p>
+              <h3>해커톤 창작지원</h3>
+              <p>해커톤을 통한 <레지던시 명파> 창작지원금(400만원 이내)으로 더욱 창의적인 작품 활동을 지원합니다.</p>
             </div>
-          </div><!-- End Service Item -->
+          </div>
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
             <div class="service-item position-relative">
               <div class="icon">
-                <i class="bi bi-globe" style="color: #6610f2;"></i>
+                <i class="bi bi-calendar-event" style="color: #6610f2;"></i>
               </div>
-              <a href="<c:url value='/blog'/>" class="stretched-link">
-                <h3>지역 문화 행사</h3>
-              </a>
-              <p>고성 지역의 문화적 특색을 살린 다양한 예술 행사와 축제 정보를 제공합니다. 지역 사회와 함께하는 문화 활동에 참여해보세요.</p>
+              <h3>아트케이션 페스티벌</h3>
+              <p>전시, 공연, 부스 운영 등 다양한 형태로 아트케이션 페스티벌에 참여하여 작품을 선보일 수 있습니다.</p>
             </div>
-          </div><!-- End Service Item -->
+          </div>
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
             <div class="service-item position-relative">
               <div class="icon">
-                <i class="bi bi-award" style="color: #f3268c;"></i>
+                <i class="bi bi-currency-dollar" style="color: #f3268c;"></i>
               </div>
-              <a href="<c:url value='/starter'/>" class="stretched-link">
-                <h3>창작 지원 프로그램</h3>
-              </a>
-              <p>예술인들의 창작 활동을 지원하는 다양한 프로그램과 지원금 정보를 안내합니다. 창작에 집중할 수 있는 환경을 만들어드립니다.</p>
+              <h3>활동비 지원</h3>
+              <p>한 달간의 창작 활동을 위한 활동비 100만원을 지원하여 경제적 부담 없이 창작에 전념할 수 있습니다.</p>
             </div>
-          </div><!-- End Service Item -->
+          </div>
 
         </div>
 
       </div>
 
-    </section><!-- /Promotions Section -->
+    </section><!-- /Activities Section -->
 
-    <!-- Portfolio Section -->
-    <section id="portfolio" class="portfolio section">
+    <!-- Participation Section -->
+    <section id="participation" class="call-to-action section dark-background">
+
+      <div class="container">
+        
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+          <h2 style="color: white;">참여방법</h2>
+          <p style="color: #ccc;">아트케이션 고성에 어떻게 참여할 수 있을까요?</p>
+        </div><!-- End Section Title -->
+
+        <div class="row gy-4">
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+            <h3 style="color: white;">지원 대상</h3>
+            <ul style="color: #ccc;">
+              <li><i class="bi bi-check2-circle" style="color: #ff6b35;"></i> 만 45세 이하 청년, 신진예술인</li>
+              <li><i class="bi bi-check2-circle" style="color: #ff6b35;"></i> 시각, 건축, 디자인, 공예, 만화 (70%)</li>
+              <li><i class="bi bi-check2-circle" style="color: #ff6b35;"></i> 문학, 사진, 음악, 영화 (30%)</li>
+              <li><i class="bi bi-check2-circle" style="color: #ff6b35;"></i> 자차 소지자 우대</li>
+              <li><i class="bi bi-check2-circle" style="color: #ff6b35;"></i> 3년이내 고성활동 인정 시 가점</li>
+            </ul>
+          </div>
+          
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+            <h3 style="color: white;">지원 방법</h3>
+            <div style="color: #ccc;">
+              <p><strong>접수기간:</strong> 2024년 5월 13일 ~ 2024년 5월 24일</p>
+              <p><strong>신청방법:</strong></p>
+              <ol>
+                <li>고성문화재단 누리집 또는 공식 웹페이지 방문</li>
+                <li>참가신청서 다운로드 후 작성</li>
+                <li>포트폴리오 준비 (5장 이내, 자유형식)</li>
+                <li>온라인 신청 및 서류 업로드</li>
+              </ol>
+              <a href="https://goseongcf.or.kr/bid_job/123" class="btn btn-outline-light mt-3" target="_blank">
+                <i class="bi bi-globe"></i> 공식 웹페이지 방문
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Participation Section -->
+
+    <!-- Artists Section -->
+    <section id="artists" class="team section">
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>작품 갤러리</h2>
-        <p>예술인들의 다양한 작품들</p>
+        <h2>참여 예술인</h2>
+        <p>아트케이션 고성과 함께하는 12명의 예술인들</p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/김유라.jpg'/>" class="img-fluid" alt="김유라">
+              </div>
+              <div class="member-info">
+                <h4>김유라</h4>
+                <span>시각예술가</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/박상아.jpg'/>" class="img-fluid" alt="박상아">
+              </div>
+              <div class="member-info">
+                <h4>박상아</h4>
+                <span>디자이너</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/시로.jpg'/>" class="img-fluid" alt="시로">
+              </div>
+              <div class="member-info">
+                <h4>시로</h4>
+                <span>만화가</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/우빙빙.jpg'/>" class="img-fluid" alt="우빙빙">
+              </div>
+              <div class="member-info">
+                <h4>우빙빙</h4>
+                <span>건축가</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="500">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/이경민.jpg'/>" class="img-fluid" alt="이경민">
+              </div>
+              <div class="member-info">
+                <h4>이경민</h4>
+                <span>사진작가</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="600">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/이원홍.jpg'/>" class="img-fluid" alt="이원홍">
+              </div>
+              <div class="member-info">
+                <h4>이원홍</h4>
+                <span>음악가</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="700">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/이정민.jpg'/>" class="img-fluid" alt="이정민">
+              </div>
+              <div class="member-info">
+                <h4>이정민</h4>
+                <span>문학가</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="800">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/이현석.jpg'/>" class="img-fluid" alt="이현석">
+              </div>
+              <div class="member-info">
+                <h4>이현석</h4>
+                <span>영화감독</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="900">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/임태웅.jpg'/>" class="img-fluid" alt="임태웅">
+              </div>
+              <div class="member-info">
+                <h4>임태웅</h4>
+                <span>공예가</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="1000">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/정운.jpg'/>" class="img-fluid" alt="정운">
+              </div>
+              <div class="member-info">
+                <h4>정운</h4>
+                <span>조각가</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="1100">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/정은영.jpg'/>" class="img-fluid" alt="정은영">
+              </div>
+              <div class="member-info">
+                <h4>정은영</h4>
+                <span>화가</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="1200">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="<c:url value='/assets/img/artist/정주하.jpg'/>" class="img-fluid" alt="정주하">
+              </div>
+              <div class="member-info">
+                <h4>정주하</h4>
+                <span>설치미술가</span>
+              </div>
+            </div>
+          </div><!-- End Team Member -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Artists Section -->
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="portfolio section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>활동 사진</h2>
+        <p>아트케이션 고성 예술인들의 창작 활동 모습</p>
       </div><!-- End Section Title -->
 
       <div class="container">
 
         <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
 
-          <ul class="portfolio-filters isotope-filters" data-aos="fade-up" data-aos-delay="100">
-            <li data-filter="*" class="filter-active">전체</li>
-            <li data-filter=".filter-app">미술</li>
-            <li data-filter=".filter-product">공예</li>
-            <li data-filter=".filter-branding">사진</li>
-          </ul><!-- End Portfolio Filters -->
-
           <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
 
             <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
-              <img src="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-1.jpg'/>" class="img-fluid" alt="">
+              <img src="<c:url value='/assets/img/artist/김유라1.jpg'/>" class="img-fluid" alt="김유라 작업 모습">
               <div class="portfolio-info">
-                <h4>수채화 풍경</h4>
-                <p>고성의 아름다운 자연</p>
-                <a href="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-1.jpg'/>" title="수채화 풍경" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                <a href="<c:url value='/portfolio/1'/>" title="상세보기" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                <h4>김유라 작업실</h4>
+                <p>시각예술 창작 과정</p>
+                <a href="<c:url value='/assets/img/artist/김유라1.jpg'/>" title="김유라 작업실" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
               </div>
             </div><!-- End Portfolio Item -->
 
             <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
-              <img src="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-2.jpg'/>" class="img-fluid" alt="">
+              <img src="<c:url value='/assets/img/artist/박상아1.jpg'/>" class="img-fluid" alt="박상아 작업 모습">
               <div class="portfolio-info">
-                <h4>도자기 작품</h4>
-                <p>전통 기법의 현대적 해석</p>
-                <a href="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-2.jpg'/>" title="도자기 작품" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                <a href="<c:url value='/portfolio/2'/>" title="상세보기" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                <h4>박상아 스튜디오</h4>
+                <p>디자인 작업 과정</p>
+                <a href="<c:url value='/assets/img/artist/박상아1.jpg'/>" title="박상아 스튜디오" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
               </div>
             </div><!-- End Portfolio Item -->
 
             <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-branding">
-              <img src="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-3.jpg'/>" class="img-fluid" alt="">
+              <img src="<c:url value='/assets/img/artist/시로1.jpg'/>" class="img-fluid" alt="시로 작업 모습">
               <div class="portfolio-info">
-                <h4>인물 사진</h4>
-                <p>예술인의 일상 모습</p>
-                <a href="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-3.jpg'/>" title="인물 사진" data-gallery="portfolio-gallery-branding" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                <a href="<c:url value='/portfolio/3'/>" title="상세보기" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                <h4>시로 작업공간</h4>
+                <p>만화 창작 활동</p>
+                <a href="<c:url value='/assets/img/artist/시로1.jpg'/>" title="시로 작업공간" data-gallery="portfolio-gallery-branding" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
               </div>
             </div><!-- End Portfolio Item -->
 
             <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
-              <img src="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-4.jpg'/>" class="img-fluid" alt="">
+              <img src="<c:url value='/assets/img/artist/이경민1.jpg'/>" class="img-fluid" alt="이경민 촬영 모습">
               <div class="portfolio-info">
-                <h4>유화 작품</h4>
-                <p>추상적 표현의 현대미술</p>
-                <a href="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-4.jpg'/>" title="유화 작품" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                <a href="<c:url value='/portfolio/4'/>" title="상세보기" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                <h4>이경민 촬영현장</h4>
+                <p>사진 작업 과정</p>
+                <a href="<c:url value='/assets/img/artist/이경민1.jpg'/>" title="이경민 촬영현장" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
               </div>
             </div><!-- End Portfolio Item -->
 
             <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
-              <img src="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-5.jpg'/>" class="img-fluid" alt="">
+              <img src="<c:url value='/assets/img/artist/이정민1.jpg'/>" class="img-fluid" alt="이정민 집필 모습">
               <div class="portfolio-info">
-                <h4>목공예품</h4>
-                <p>자연 소재의 따뜻한 감성</p>
-                <a href="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-5.jpg'/>" title="목공예품" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                <a href="<c:url value='/portfolio/5'/>" title="상세보기" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                <h4>이정민 서재</h4>
+                <p>문학 창작 활동</p>
+                <a href="<c:url value='/assets/img/artist/이정민1.jpg'/>" title="이정민 서재" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
               </div>
             </div><!-- End Portfolio Item -->
 
             <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-branding">
-              <img src="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-6.jpg'/>" class="img-fluid" alt="">
+              <img src="<c:url value='/assets/img/artist/정은영1.jpg'/>" class="img-fluid" alt="정은영 그림 그리는 모습">
               <div class="portfolio-info">
-                <h4>풍경 사진</h4>
-                <p>고성의 사계절 아름다움</p>
-                <a href="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-6.jpg'/>" title="풍경 사진" data-gallery="portfolio-gallery-branding" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                <a href="<c:url value='/portfolio/6'/>" title="상세보기" class="details-link"><i class="bi bi-link-45deg"></i></a>
-              </div>
-            </div><!-- End Portfolio Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-app">
-              <img src="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-7.jpg'/>" class="img-fluid" alt="">
-              <div class="portfolio-info">
-                <h4>서예 작품</h4>
-                <p>전통 서예의 현대적 감각</p>
-                <a href="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-7.jpg'/>" title="서예 작품" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                <a href="<c:url value='/portfolio/7'/>" title="상세보기" class="details-link"><i class="bi bi-link-45deg"></i></a>
-              </div>
-            </div><!-- End Portfolio Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-product">
-              <img src="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-8.jpg'/>" class="img-fluid" alt="">
-              <div class="portfolio-info">
-                <h4>금속공예</h4>
-                <p>전통과 현대의 만남</p>
-                <a href="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-8.jpg'/>" title="금속공예" data-gallery="portfolio-gallery-product" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                <a href="<c:url value='/portfolio/8'/>" title="상세보기" class="details-link"><i class="bi bi-link-45deg"></i></a>
-              </div>
-            </div><!-- End Portfolio Item -->
-
-            <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-branding">
-              <img src="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-9.jpg'/>" class="img-fluid" alt="">
-              <div class="portfolio-info">
-                <h4>작업실 모습</h4>
-                <p>예술인들의 창작 공간</p>
-                <a href="<c:url value='/assets/img/masonry-portfolio/masonry-portfolio-9.jpg'/>" title="작업실 모습" data-gallery="portfolio-gallery-branding" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
-                <a href="<c:url value='/portfolio/9'/>" title="상세보기" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                <h4>정은영 아틀리에</h4>
+                <p>회화 작업 과정</p>
+                <a href="<c:url value='/assets/img/artist/정은영1.jpg'/>" title="정은영 아틀리에" data-gallery="portfolio-gallery-branding" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
               </div>
             </div><!-- End Portfolio Item -->
 
@@ -548,506 +707,74 @@
 
       </div>
 
-    </section><!-- /Portfolio Section -->
-
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="testimonials section">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Testimonials</h2>
-        <p>What they are saying about us</p>
-      </div><!-- End Section Title -->
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="swiper init-swiper">
-          <script type="application/json" class="swiper-config">
-            {
-              "loop": true,
-              "speed": 600,
-              "autoplay": {
-                "delay": 5000
-              },
-              "slidesPerView": "auto",
-              "pagination": {
-                "el": ".swiper-pagination",
-                "type": "bullets",
-                "clickable": true
-              },
-              "breakpoints": {
-                "320": {
-                  "slidesPerView": 1,
-                  "spaceBetween": 40
-                },
-                "1200": {
-                  "slidesPerView": 3,
-                  "spaceBetween": 10
-                }
-              }
-            }
-          </script>
-          <div class="swiper-wrapper">
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="<c:url value='/assets/img/testimonials/testimonials-1.jpg'/>" class="testimonial-img" alt="">
-                <h3>Saul Goodman</h3>
-                <h4>Ceo &amp; Founder</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-2.jpg" class="testimonial-img" alt="">
-                <h3>Sara Wilsson</h3>
-                <h4>Designer</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-3.jpg" class="testimonial-img" alt="">
-                <h3>Jena Karlis</h3>
-                <h4>Store Owner</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-4.jpg" class="testimonial-img" alt="">
-                <h3>Matt Brandon</h3>
-                <h4>Freelancer</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-5.jpg" class="testimonial-img" alt="">
-                <h3>John Larson</h3>
-                <h4>Entrepreneur</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam tempor noster veniam enim culpa labore duis sunt culpa nulla illum cillum fugiat legam esse veniam culpa fore nisi cillum quid.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div><!-- End testimonial item -->
-
-          </div>
-          <div class="swiper-pagination"></div>
-        </div>
-
-      </div>
-
-    </section><!-- /Testimonials Section -->
-
-    <!-- Pricing Section -->
-    <section id="pricing" class="pricing section">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Pricing</h2>
-        <p>What they are saying about us</p>
-      </div><!-- End Section Title -->
-
-      <div class="container">
-
-        <div class="row gy-3">
-
-          <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="pricing-item">
-              <h3>Free</h3>
-              <h4><sup>$</sup>0<span> / month</span></h4>
-              <ul>
-                <li>Aida dere</li>
-                <li>Nec feugiat nisl</li>
-                <li>Nulla at volutpat dola</li>
-                <li class="na">Pharetra massa</li>
-                <li class="na">Massa ultricies mi</li>
-              </ul>
-              <div class="btn-wrap">
-                <a href="#" class="btn-buy">Buy Now</a>
-              </div>
-            </div>
-          </div><!-- End Pricing Item -->
-
-          <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="pricing-item featured">
-              <h3>Business</h3>
-              <h4><sup>$</sup>19<span> / month</span></h4>
-              <ul>
-                <li>Aida dere</li>
-                <li>Nec feugiat nisl</li>
-                <li>Nulla at volutpat dola</li>
-                <li>Pharetra massa</li>
-                <li class="na">Massa ultricies mi</li>
-              </ul>
-              <div class="btn-wrap">
-                <a href="#" class="btn-buy">Buy Now</a>
-              </div>
-            </div>
-          </div><!-- End Pricing Item -->
-
-          <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="400">
-            <div class="pricing-item">
-              <h3>Developer</h3>
-              <h4><sup>$</sup>29<span> / month</span></h4>
-              <ul>
-                <li>Aida dere</li>
-                <li>Nec feugiat nisl</li>
-                <li>Nulla at volutpat dola</li>
-                <li>Pharetra massa</li>
-                <li>Massa ultricies mi</li>
-              </ul>
-              <div class="btn-wrap">
-                <a href="#" class="btn-buy">Buy Now</a>
-              </div>
-            </div>
-          </div><!-- End Pricing Item -->
-
-          <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="400">
-            <div class="pricing-item">
-              <span class="advanced">Advanced</span>
-              <h3>Ultimate</h3>
-              <h4><sup>$</sup>49<span> / month</span></h4>
-              <ul>
-                <li>Aida dere</li>
-                <li>Nec feugiat nisl</li>
-                <li>Nulla at volutpat dola</li>
-                <li>Pharetra massa</li>
-                <li>Massa ultricies mi</li>
-              </ul>
-              <div class="btn-wrap">
-                <a href="#" class="btn-buy">Buy Now</a>
-              </div>
-            </div>
-          </div><!-- End Pricing Item -->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Pricing Section -->
-
-    <!-- Faq Section -->
-    <section id="faq" class="faq section">
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Frequently Asked Questions</h2>
-        <p>Frequently Asked Questions</p>
-      </div><!-- End Section Title -->
-
-      <div class="container" data-aos="fade-up">
-        <div class="row">
-          <div class="col-12">
-            <div class="custom-accordion" id="accordion-faq">
-              <div class="accordion-item">
-                <h2 class="mb-0">
-                  <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-faq-1">
-                    How to download and register?
-                  </button>
-                </h2>
-
-                <div id="collapse-faq-1" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion-faq">
-                  <div class="accordion-body">
-                    Far far away, behind the word mountains, far from the countries
-                    Vokalia and Consonantia, there live the blind texts. Separated
-                    they live in Bookmarksgrove right at the coast of the Semantics,
-                    a large language ocean.
-                  </div>
-                </div>
-              </div>
-              <!-- .accordion-item -->
-
-              <div class="accordion-item">
-                <h2 class="mb-0">
-                  <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-faq-2" "="">
-                How to create your paypal account?
-              </button>
-            </h2>
-            <div id=" collapse-faq-2" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion-faq">
-                    <div class="accordion-body">
-                      A small river named Duden flows by their place and supplies it
-                      with the necessary regelialia. It is a paradisematic country, in
-                      which roasted parts of sentences fly into your mouth.
-                    </div>
-              </div>
-            </div>
-            <!-- .accordion-item -->
-
-            <div class="accordion-item">
-              <h2 class="mb-0">
-                <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-faq-3">
-                  How to link your paypal and bank account?
-                </button>
-              </h2>
-
-              <div id="collapse-faq-3" class="collapse" aria-labelledby="headingThree" data-parent="#accordion-faq">
-                <div class="accordion-body">
-                  When she reached the first hills of the Italic Mountains, she
-                  had a last view back on the skyline of her hometown
-                  Bookmarksgrove, the headline of Alphabet Village and the subline
-                  of her own road, the Line Lane. Pityful a rethoric question ran
-                  over her cheek, then she continued her way.
-                </div>
-              </div>
-            </div>
-            <!-- .accordion-item -->
-
-          </div>
-        </div>
-      </div>
-      </div>
-    </section><!-- /Faq Section -->
-
-    <!-- Team Section -->
-    <section id="team" class="team section">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>운영진 소개</h2>
-        <p>아트케이션 고성을 이끌어가는 사람들</p>
-      </div><!-- End Section Title -->
-
-      <div class="container">
-
-        <div class="row gy-4">
-
-          <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
-            <div class="team-member">
-              <div class="member-img">
-                <img src="assets/img/team/team-1.jpg" class="img-fluid" alt="">
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-              </div>
-              <div class="member-info">
-                <h4>김예술</h4>
-                <span>아트케이션 고성 대표</span>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-          <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
-            <div class="team-member">
-              <div class="member-img">
-                <img src="<c:url value='/assets/img/team/team-2.jpg'/>" class="img-fluid" alt="">
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-              </div>
-              <div class="member-info">
-                <h4>이창작</h4>
-                <span>기획 및 전시 담당</span>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-          <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="300">
-            <div class="team-member">
-              <div class="member-img">
-                <img src="<c:url value='/assets/img/team/team-3.jpg'/>" class="img-fluid" alt="">
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-              </div>
-              <div class="member-info">
-                <h4>박문화</h4>
-                <span>교육 및 워크샵 담당</span>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-          <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="400">
-            <div class="team-member">
-              <div class="member-img">
-                <img src="<c:url value='/assets/img/team/team-4.jpg'/>" class="img-fluid" alt="">
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-              </div>
-              <div class="member-info">
-                <h4>정소통</h4>
-                <span>홍보 및 마케팅 담당</span>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Team Section -->
-
-    <!-- Recent Posts Section -->
-    <section id="recent-posts" class="recent-posts section">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>최신 예술인 기록</h2>
-        <p>예술인들의 최근 활동과 이야기<br></p>
-      </div><!-- End Section Title -->
-
-      <div class="container">
-
-        <div class="row gy-4">
-
-          <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <article>
-
-              <div class="post-img">
-                <img src="<c:url value='/assets/img/blog/blog-1.jpg'/>" alt="" class="img-fluid">
-              </div>
-
-              <p class="post-category">미술</p>
-
-              <h2 class="title">
-                <a href="<c:url value='/blog/1'/>">고성 바다를 담은 수채화 연작 전시회 후기</a>
-              </h2>
-
-              <div class="d-flex align-items-center">
-                <img src="<c:url value='/assets/img/blog/blog-author.jpg'/>" alt="" class="img-fluid post-author-img flex-shrink-0">
-                <div class="post-meta">
-                  <p class="post-author">김해안</p>
-                  <p class="post-date">
-                    <time datetime="2024-12-20">2024년 12월 20일</time>
-                  </p>
-                </div>
-              </div>
-
-            </article>
-          </div><!-- End post list item -->
-
-          <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <article>
-
-              <div class="post-img">
-                <img src="<c:url value='/assets/img/blog/blog-2.jpg'/>" alt="" class="img-fluid">
-              </div>
-
-              <p class="post-category">공예</p>
-
-              <h2 class="title">
-                <a href="<c:url value='/blog/2'/>">전통 옹기 제작 워크샵 참여 후기</a>
-              </h2>
-
-              <div class="d-flex align-items-center">
-                <img src="<c:url value='/assets/img/blog/blog-author-2.jpg'/>" alt="" class="img-fluid post-author-img flex-shrink-0">
-                <div class="post-meta">
-                  <p class="post-author">박도예</p>
-                  <p class="post-date">
-                    <time datetime="2024-12-18">2024년 12월 18일</time>
-                  </p>
-                </div>
-              </div>
-
-            </article>
-          </div><!-- End post list item -->
-
-          <div class="col-xl-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-            <article>
-
-              <div class="post-img">
-                <img src="<c:url value='/assets/img/blog/blog-3.jpg'/>" alt="" class="img-fluid">
-              </div>
-
-              <p class="post-category">사진</p>
-
-              <h2 class="title">
-                <a href="<c:url value='/blog/3'/>">고성의 사계절을 담은 사진전 개최 소식</a>
-              </h2>
-
-              <div class="d-flex align-items-center">
-                <img src="<c:url value='/assets/img/blog/blog-author-3.jpg'/>" alt="" class="img-fluid post-author-img flex-shrink-0">
-                <div class="post-meta">
-                  <p class="post-author">이셔터</p>
-                  <p class="post-date">
-                    <time datetime="2024-12-15">2024년 12월 15일</time>
-                  </p>
-                </div>
-              </div>
-
-            </article>
-          </div><!-- End post list item -->
-
-        </div><!-- End recent posts list -->
-
-      </div>
-
-    </section><!-- /Recent Posts Section -->
-
+    </section><!-- /Gallery Section -->
 
   </main>
 
   <footer id="footer" class="footer dark-background">
-    <div class="container">
-      <h3 class="sitename">아트케이션 고성</h3>
-      <p>고성 지역 예술인들이 함께 만들어가는 창작 공동체입니다. 서로의 경험을 나누고, 함께 성장하며, 지역 문화 발전에 기여합니다.</p>
-      <div class="social-links d-flex justify-content-center">
-        <a href=""><i class="bi bi-twitter-x"></i></a>
-        <a href=""><i class="bi bi-facebook"></i></a>
-        <a href=""><i class="bi bi-instagram"></i></a>
-        <a href=""><i class="bi bi-youtube"></i></a>
-        <a href=""><i class="bi bi-envelope"></i></a>
-      </div>
-      <div class="container">
-        <div class="copyright">
-          <span>Copyright</span> <strong class="px-1 sitename">아트케이션 고성</strong> <span>All Rights Reserved</span>
+    <div class="container footer-top">
+      <div class="row gy-5">
+        
+        <!-- 아트케이션 고성 소개 -->
+        <div class="col-lg-6 col-md-6">
+          <div class="footer-about h-100">
+            <div class="footer-contact">
+              <div class="contact-info">
+                <p class="mb-3">(24734) 강원특별자치도 고성군 간성읍 수성로 3 달홀문화센터 1층 고성문화재단 </p>
+                <p class="mb-3">TEL: 033-681-0105FAX: 033-681-0103</p>
+                <!-- 관련 사이트 링크 -->
+                <div class="related-links mt-3">
+                  <div class="d-flex flex-wrap gap-3">
+                    <a href="https://goseongcf.or.kr" target="_blank" class="text-decoration-none">
+                      <i class="bi bi-chevron-right me-1"></i>고성문화재단
+                    </a>
+                    <a href="https://www.arko.or.kr" target="_blank" class="text-decoration-none">
+                      <i class="bi bi-chevron-right me-1"></i>한국문화예술위원회
+                    </a>
+                    <a href="https://goseongcf.or.kr/bid_job/123" target="_blank" class="text-decoration-none">
+                      <i class="bi bi-chevron-right me-1"></i>공식 웹페이지
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="credits">
-          <!-- All the links in the footer should remain intact. -->
-          <!-- You can delete the links only if you've purchased the pro version. -->
-          <!-- Licensing information: https://bootstrapmade.com/license/ -->
-          <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-          Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+
+        <!-- 소셜 미디어 -->
+        <div class="col-lg-6 col-md-6">
+          <div class="footer-newsletter h-100 text-center">
+            <h4 class="mb-4">소셜 미디어</h4>
+            <p class="mb-4">아트케이션 고성의 최신 소식을 만나보세요</p>
+            <div class="social-links d-flex gap-3 justify-content-center">
+              <a href="https://www.instagram.com/artcation_goseong" target="_blank" class="social-link" title="인스타그램">
+                <i class="bi bi-instagram"></i>
+              </a>
+              <a href="https://goseongcf.or.kr" target="_blank" class="social-link" title="고성문화재단">
+                <i class="bi bi-globe"></i>
+              </a>
+              <a href="mailto:goseongcf@daum.net" class="social-link" title="이메일">
+                <i class="bi bi-envelope"></i>
+              </a>
+              <a href="tel:033-681-0105" class="social-link" title="전화">
+                <i class="bi bi-telephone"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+    </div>
+
+    <div class="container">
+      <div class="copyright text-center py-4 border-top">
+        <div class="row align-items-center">
+          <div class="col-12">
+            <p class="mb-2">※ 이 사업은 고성문화재단과 한국문화예술위원회가 공동으로 협력 추진하는 사업입니다</p>
+            <p class="mb-0">© <span>Copyright</span> <strong class="px-1 sitename">아트케이션 고성</strong> <span>All Rights Reserved</span></p>
+          </div>
         </div>
       </div>
     </div>

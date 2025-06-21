@@ -127,10 +127,9 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         <nav id="navmenu" class="navmenu">
           <ul>
             <li><a href="<c:url value='/'/>">홈</a></li>
-            <li><a href="<c:url value='/#about'/>">예술인 소개</a></li>
+            <li><a href="<c:url value='/#about'/>">아트케이션 고성이란?</a></li>
             <li><a href="<c:url value='/blog'/>">예술인 기록</a></li>
             <li><a href="<c:url value='/community'/>" class="active">커뮤니티</a></li>
-            <li><a href="<c:url value='/#promotions'/>">홍보 및 공지</a></li>
             
             <c:choose>
             <c:when test="${not empty sessionScope.loginUser}">
@@ -218,7 +217,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
           <div class="row mb-4">
             <div class="col-lg-8 d-flex align-items-center">
               <div class="d-flex align-items-center">
-                <label for="sortSelect" class="form-label me-2 mb-0">정렬:</label>
+                <label for="sortSelect" class="form-label me-2 mb-0"></label>
                 <select id="sortSelect" class="form-select" style="width: auto;" onchange="changeSortOrder()">
                   <option value="latest" ${currentSort == 'latest' ? 'selected' : ''}>최신순</option>
                   <option value="views" ${currentSort == 'views' ? 'selected' : ''}>조회순</option>
@@ -451,3 +450,4 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
     </script>
   </body>
 </html>
+<%@ include file="common/footer.jsp" %> 

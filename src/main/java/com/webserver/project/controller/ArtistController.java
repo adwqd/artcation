@@ -183,7 +183,12 @@ public class ArtistController {
 
     // 예술인 기록 수정 처리
     @PostMapping("/edit/{id}")
-    public String editPost(@PathVariable Integer id, @ModelAttribute ArtistPost post, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String editPost(@PathVariable Integer id, 
+                          @ModelAttribute ArtistPost post, 
+                          @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                          @RequestParam(value = "removeCurrentImage", required = false) String removeCurrentImage,
+                          HttpSession session, 
+                          RedirectAttributes redirectAttributes) {
         try {
             // 로그인 체크
             if (!isLoggedIn(session)) {
@@ -208,11 +213,43 @@ public class ArtistController {
             
             post.setPostId(id);
             post.setArtistId(existingPost.getArtistId()); // 원래 작성자 ID 유지
+            
+            // 이미지 처리 로직
+            String currentImageUrl = existingPost.getImageUrl();
+            String currentImageName = existingPost.getImageName();
+            
+            // 1. 기존 이미지 삭제 체크박스가 선택된 경우
+            if ("true".equals(removeCurrentImage)) {
+                post.setImageUrl(null);
+                post.setImageName(null);
+                System.out.println("기존 이미지 삭제 요청됨");
+            } else {
+                // 기존 이미지 정보 유지
+                post.setImageUrl(currentImageUrl);
+                post.setImageName(currentImageName);
+            }
+            
+            // 2. 새 이미지 파일이 업로드된 경우
+            if (imageFile != null && !imageFile.isEmpty()) {
+                try {
+                    String newImageUrl = fileUploadService.uploadImage(imageFile);
+                    post.setImageUrl(newImageUrl);
+                    post.setImageName(imageFile.getOriginalFilename());
+                    System.out.println("새 이미지 업로드됨: " + newImageUrl);
+                } catch (Exception e) {
+                    System.out.println("이미지 업로드 실패: " + e.getMessage());
+                    redirectAttributes.addFlashAttribute("error", "이미지 업로드 실패: " + e.getMessage());
+                    return "redirect:/artist/edit/" + id;
+                }
+            }
+            
             artistPostService.update(post);
             
             redirectAttributes.addFlashAttribute("message", "예술인 기록이 성공적으로 수정되었습니다.");
             return "redirect:/blog/" + id;
         } catch (Exception e) {
+            System.out.println("기록 수정 오류: " + e.getMessage());
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "기록 수정 중 오류가 발생했습니다: " + e.getMessage());
             return "redirect:/artist/edit/" + id;
         }

@@ -118,7 +118,7 @@
               </div>
             </div>
             
-            <form action="<c:url value='/artist/edit/${post.postId}'/>" method="post" class="php-email-form">
+            <form action="<c:url value='/artist/edit/${post.postId}'/>" method="post" enctype="multipart/form-data" class="artist-edit-form">
               
               <!-- 작성자 정보 (읽기 전용) -->
               <div class="row gy-4 mb-4">
@@ -141,6 +141,67 @@
                 <div class="col-md-12">
                   <label for="content" class="form-label">내용 <span class="text-danger">*</span></label>
                   <textarea class="form-control" name="content" id="content" rows="10" required>${post.content}</textarea>
+                </div>
+              </div>
+
+              <!-- 현재 이미지 표시 -->
+              <c:if test="${not empty post.imageUrl}">
+                <div class="row gy-4 mb-4">
+                  <div class="col-md-12">
+                    <label class="form-label">현재 이미지</label>
+                    <div class="card">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-image"></i> 현재 업로드된 이미지</span>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="removeCurrentImage" name="removeCurrentImage" value="true">
+                          <label class="form-check-label text-danger" for="removeCurrentImage">
+                            <i class="bi bi-trash"></i> 이미지 삭제
+                          </label>
+                        </div>
+                      </div>
+                      <div class="card-body text-center">
+                        <img src="<c:url value='${post.imageUrl}'/>" alt="현재 이미지" class="img-fluid" style="max-height: 300px;">
+                        <c:if test="${not empty post.imageName}">
+                          <p class="text-muted mt-2 mb-0"><small>파일명: ${post.imageName}</small></p>
+                        </c:if>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </c:if>
+
+              <!-- 새 이미지 첨부 -->
+              <div class="row gy-4 mb-4">
+                <div class="col-md-12">
+                  <label for="imageFile" class="form-label">
+                    <c:choose>
+                      <c:when test="${not empty post.imageUrl}">새 이미지로 변경</c:when>
+                      <c:otherwise>이미지 첨부</c:otherwise>
+                    </c:choose>
+                    <span class="text-muted">(선택사항)</span>
+                  </label>
+                  <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*" onchange="previewImage(this)">
+                  <small class="form-text text-muted">
+                    <c:choose>
+                      <c:when test="${not empty post.imageUrl}">새 이미지를 선택하면 기존 이미지가 교체됩니다.</c:when>
+                      <c:otherwise>JPG, PNG, GIF, WebP 형식만 가능하며, 최대 10MB까지 업로드할 수 있습니다.</c:otherwise>
+                    </c:choose>
+                  </small>
+                  
+                  <!-- 새 이미지 미리보기 -->
+                  <div id="imagePreview" class="mt-3" style="display: none;">
+                    <div class="card">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-eye"></i> 새 이미지 미리보기</span>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeNewImage()">
+                          <i class="bi bi-x"></i> 제거
+                        </button>
+                      </div>
+                      <div class="card-body text-center">
+                        <img id="previewImg" src="" alt="미리보기" class="img-fluid" style="max-height: 300px;">
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -169,9 +230,112 @@
   <!-- Vendor JS Files -->
   <script src="<c:url value='/assets/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
   <script src="<c:url value='/assets/vendor/aos/aos.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/glightbox/js/glightbox.min.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/isotope-layout/isotope.pkgd.min.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/swiper/swiper-bundle.min.js'/>"></script>
 
   <!-- Main JS File -->
   <script src="<c:url value='/assets/js/main.js'/>"></script>
+
+  <!-- 이미지 미리보기 JavaScript -->
+  <script>
+  function previewImage(input) {
+    const file = input.files[0];
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    
+    if (file) {
+      // 파일 크기 체크 (10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('파일 크기는 10MB를 초과할 수 없습니다.');
+        input.value = '';
+        preview.style.display = 'none';
+        return;
+      }
+      
+      // 파일 타입 체크
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('JPG, PNG, GIF, WebP 형식의 이미지만 업로드 가능합니다.');
+        input.value = '';
+        preview.style.display = 'none';
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    } else {
+      preview.style.display = 'none';
+    }
+  }
+  
+  function removeNewImage() {
+    document.getElementById('imageFile').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
+  }
+  </script>
+
+  <!-- 폼 검증 스크립트 -->
+  <script>
+    // 파일 선택 시 미리보기
+    document.getElementById('imageFile').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      const preview = document.getElementById('imagePreview');
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.innerHTML = '<img src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 200px;">';
+        }
+        reader.readAsDataURL(file);
+      } else {
+        // 기존 이미지 복원
+        const existingImage = document.getElementById('existingImage').value;
+        if (existingImage) {
+          preview.innerHTML = '<img src="<c:url value="/uploads/"/>' + existingImage + '" class="img-fluid rounded" style="max-height: 200px;">';
+        }
+      }
+    });
+
+    // 폼 제출 검증
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form');
+      
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          const title = document.getElementById('title').value.trim();
+          const content = document.getElementById('content').value.trim();
+          
+          if (!title) {
+            alert('제목을 입력해주세요.');
+            e.preventDefault();
+            document.getElementById('title').focus();
+            return false;
+          }
+          
+          if (!content) {
+            alert('내용을 입력해주세요.');
+            e.preventDefault();
+            document.getElementById('content').focus();
+            return false;
+          }
+          
+          // 폼 제출 중 버튼 비활성화
+          const submitBtn = this.querySelector('button[type="submit"]');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> 수정 중...';
+          }
+        });
+      }
+    });
+  </script>
+
+  <%@ include file="common/footer.jsp" %>
 
 </body>
 

@@ -37,17 +37,16 @@
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
       <a href="<c:url value='/'/>" class="logo d-flex align-items-center">
-        <h1 class="sitename">아트케이션 고성</h1>
+        <h1 class="sitename">Artcation Goseong</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="<c:url value='/'/>">홈</a></li>
-          <li><a href="<c:url value='/#about'/>">예술인 소개</a></li>
+          <li><a href="<c:url value='/#about'/>">아트케이션 고성이란</a></li>
           <li><a href="<c:url value='/blog'/>">예술인 기록</a></li>
           <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
-          <li><a href="<c:url value='/#promotions'/>">홍보 및 공지</a></li>
-          <li><a href="<c:url value='/#contact'/>">문의하기</a></li>
+
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -58,152 +57,138 @@
   <main class="main">
 
     <!-- Page Title -->
-    <div class="page-title">
+    <div class="page-title dark-background">
       <div class="container">
-        <div class="row">
-          <div class="col-lg-12">
-            <h1>로그인</h1>
-            <p>예술인 및 관리자 로그인</p>
-          </div>
-        </div>
+        <h1>로그인</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="<c:url value='/'/>">홈</a></li>
+            <li class="current">로그인</li>
+          </ol>
+        </nav>
       </div>
-    </div>
+    </div><!-- End Page Title -->
 
     <!-- Login Section -->
-    <section class="section">
+    <section class="contact section">
       <div class="container">
+        
+        <!-- Flash Messages -->
+        <c:if test="${not empty error}">
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            ${error}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </c:if>
+
+        <c:if test="${not empty message}">
+          <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle-fill"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </c:if>
+        
         <div class="row justify-content-center">
-          <div class="col-lg-6 col-md-8">
+          <div class="col-lg-6">
             
-            <div class="card shadow">
-              <div class="card-header bg-primary text-white text-center">
-                <h4 class="mb-0">로그인</h4>
-                <p class="mb-0 mt-2">예술인 기록 작성을 위해 로그인해주세요</p>
-              </div>
-              <div class="card-body p-4">
-                
-                <c:if test="${not empty error}">
-                  <div class="alert alert-danger" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    ${error}
-                  </div>
-                </c:if>
-
-                <c:if test="${not empty message}">
-                  <div class="alert alert-info" role="alert">
-                    <i class="bi bi-info-circle-fill"></i>
-                    ${message}
-                  </div>
-                </c:if>
-
-                <form action="<c:url value='/login'/>" method="post">
-                  <div class="mb-3">
-                    <label for="username" class="form-label">
-                      <i class="bi bi-person-fill"></i> 사용자명
-                    </label>
-                    <input type="text" class="form-control" id="username" name="username" 
-                           placeholder="사용자명을 입력하세요" required>
-                  </div>
-                  
-                  <div class="mb-3">
-                    <label for="password" class="form-label">
-                      <i class="bi bi-lock-fill"></i> 비밀번호
-                    </label>
-                    <input type="password" class="form-control" id="password" name="password" 
-                           placeholder="비밀번호를 입력하세요" required>
-                  </div>
-                  
-                  <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                      <i class="bi bi-box-arrow-in-right"></i> 로그인
-                    </button>
-                  </div>
-                </form>
-
-                <hr class="my-4">
-                
-                <div class="text-center">
-                  <h6 class="text-muted">테스트 계정</h6>
-                  <div class="row">
-                    <div class="col-6">
-                      <small class="text-muted">
-                        <strong>예술인:</strong><br>
-                        ID: artist<br>
-                        PW: artist123
-                      </small>
-                    </div>
-                    <div class="col-6">
-                      <small class="text-muted">
-                        <strong>관리자:</strong><br>
-                        ID: admin<br>
-                        PW: admin123
-                      </small>
-                    </div>
-                  </div>
+            <form action="<c:url value='/login'/>" method="post" class="login-form">
+              
+              <!-- 로그인 안내 -->
+              <div class="row gy-4 mb-4">
+                <div class="col-md-12 text-center">
+                  <h3><i class="bi bi-person-circle"></i> 로그인</h3>
+                  <p class="text-muted">예술인 기록 작성을 위해 로그인해주세요</p>
                 </div>
-
               </div>
-              <div class="card-footer text-center">
-                <a href="<c:url value='/'/>" class="btn btn-outline-secondary">
-                  <i class="bi bi-house-fill"></i> 홈으로 돌아가기
-                </a>
-              </div>
-            </div>
 
+              <!-- 로그인 폼 -->
+              <div class="row gy-4 mb-4">
+                <div class="col-md-12">
+                  <label for="username" class="form-label">
+                    <i class="bi bi-person-fill"></i> 사용자명 <span class="text-danger">*</span>
+                  </label>
+                  <input type="text" class="form-control" id="username" name="username" 
+                         placeholder="사용자명을 입력하세요" autocomplete="username" required>
+                </div>
+              </div>
+
+              <div class="row gy-4 mb-4">
+                <div class="col-md-12">
+                  <label for="password" class="form-label">
+                    <i class="bi bi-lock-fill"></i> 비밀번호 <span class="text-danger">*</span>
+                  </label>
+                  <input type="password" class="form-control" id="password" name="password" 
+                         placeholder="비밀번호를 입력하세요" autocomplete="current-password" required>
+                </div>
+              </div>
+
+              <!-- 버튼 -->
+              <div class="row">
+                <div class="col-md-12 text-center">
+                  <button type="submit" class="btn btn-primary me-2">
+                    <i class="bi bi-box-arrow-in-right"></i> 로그인
+                  </button>
+                  <a href="<c:url value='/'/>" class="btn btn-secondary">
+                    <i class="bi bi-house-fill"></i> 홈으로
+                  </a>
+                </div>
+              </div>
+
+            </form>
+            
           </div>
         </div>
+
       </div>
     </section>
 
   </main>
 
-  <!-- Footer -->
-  <footer id="footer" class="footer dark-background">
-    <div class="container footer-top">
-      <div class="row gy-4">
-        <div class="col-lg-4 col-md-6 footer-about">
-          <a href="<c:url value='/'/>" class="logo d-flex align-items-center">
-            <span class="sitename">아트케이션 고성</span>
-          </a>
-          <div class="footer-contact pt-3">
-            <p>경상남도 고성군 고성읍 문화로 123</p>
-            <p class="mt-3"><strong>전화:</strong> <span>055-123-4567</span></p>
-            <p><strong>이메일:</strong> <span>artcation.goseong@gmail.com</span></p>
-          </div>
-          <div class="social-links d-flex mt-4">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-youtube"></i></a>
-            <a href=""><i class="bi bi-envelope"></i></a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">아트케이션 고성</strong> <span>All Rights Reserved</span></p>
-    </div>
-  </footer>
-
-  <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-  <!-- Preloader -->
-  <div id="preloader"></div>
+  <!-- 로그인 폼 검증 스크립트 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.querySelector('form');
+      
+      if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+          const username = document.getElementById('username').value.trim();
+          const password = document.getElementById('password').value.trim();
+          
+          if (!username) {
+            alert('사용자명을 입력해주세요.');
+            e.preventDefault();
+            document.getElementById('username').focus();
+            return false;
+          }
+          
+          if (!password) {
+            alert('비밀번호를 입력해주세요.');
+            e.preventDefault();
+            document.getElementById('password').focus();
+            return false;
+          }
+          
+          // 폼 제출 중 버튼 비활성화
+          const submitBtn = this.querySelector('button[type="submit"]');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> 로그인 중...';
+          }
+        });
+      }
+    });
+  </script>
 
   <!-- Vendor JS Files -->
   <script src="<c:url value='/assets/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
-  <script src="<c:url value='/assets/vendor/php-email-form/validate.js'/>"></script>
   <script src="<c:url value='/assets/vendor/aos/aos.js'/>"></script>
   <script src="<c:url value='/assets/vendor/glightbox/js/glightbox.min.js'/>"></script>
-  <script src="<c:url value='/assets/vendor/swiper/swiper-bundle.min.js'/>"></script>
-  <script src="<c:url value='/assets/vendor/imagesloaded/imagesloaded.pkgd.min.js'/>"></script>
   <script src="<c:url value='/assets/vendor/isotope-layout/isotope.pkgd.min.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/swiper/swiper-bundle.min.js'/>"></script>
 
   <!-- Main JS File -->
   <script src="<c:url value='/assets/js/main.js'/>"></script>
 
-</body>
-
-</html> 
+<%@ include file="common/footer.jsp" %> 

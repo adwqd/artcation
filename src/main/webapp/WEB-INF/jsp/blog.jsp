@@ -47,7 +47,6 @@
     .blog-post:hover {
       transform: translateY(-10px);
       box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-      border-color: #3498db;
     }
 
     .blog-post .card-link {
@@ -114,6 +113,8 @@
       border-top: 1px solid #ecf0f1;
       font-size: 0.85rem;
       margin-bottom: 0;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     .blog-post .post-meta span {
@@ -129,21 +130,6 @@
 
     .blog-post:hover .post-meta span {
       color: #7f8c8d;
-    }
-
-    .blog-post .post-stats {
-      text-align: center;
-      padding-top: 10px;
-    }
-
-    .blog-post .post-stats small {
-      color: #bdc3c7;
-      font-size: 0.8rem;
-    }
-
-    .blog-post .post-stats i {
-      color: #e74c3c;
-      margin-right: 3px;
     }
 
     /* 애니메이션 효과 */
@@ -170,6 +156,11 @@
       
       .blog-post .post-img img {
         height: 200px;
+      }
+      
+      .blog-post .post-meta {
+        justify-content: flex-start;
+        gap: 10px;
       }
     }
 
@@ -244,10 +235,9 @@
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="<c:url value='/'/>">홈</a></li>
-          <li><a href="<c:url value='/#about'/>">예술인 소개</a></li>
+          <li><a href="<c:url value='/#about'/>">아트케이션 고성이란?</a></li>
           <li><a href="<c:url value='/blog'/>" class="active">예술인 기록</a></li>
           <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
-          <li><a href="<c:url value='/#promotions'/>">홍보 및 공지</a></li>
           <c:choose>
             <c:when test="${not empty sessionScope.loginUser}">
               <li class="dropdown"><a href="#"><span>${sessionScope.displayName}님</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
@@ -387,12 +377,11 @@
                         </c:otherwise>
                       </c:choose>
                     </span>
+                    <span class="post-views">
+                      <i class="bi bi-eye"></i>
+                      ${post.viewCount}회
+                    </span>
                   </div>
-                    <div class="post-stats mt-2">
-                      <small class="text-muted">
-                        <i class="bi bi-eye"></i> ${post.viewCount}회 조회
-                      </small>
-                    </div>
                   </div>
                 </a>
               </article>
@@ -435,12 +424,11 @@
                       <i class="bi bi-calendar"></i>
                       2024.06.20
                     </span>
+                    <span class="post-views">
+                      <i class="bi bi-eye"></i>
+                      125회
+                    </span>
                   </div>
-                    <div class="post-stats mt-2">
-                      <small class="text-muted">
-                        <i class="bi bi-eye"></i> 125회 조회
-                      </small>
-                    </div>
                   </div>
                 </a>
               </article>
@@ -464,12 +452,11 @@
                       <i class="bi bi-calendar"></i>
                       2024.06.19
                     </span>
+                    <span class="post-views">
+                      <i class="bi bi-eye"></i>
+                      89회
+                    </span>
                   </div>
-                    <div class="post-stats mt-2">
-                      <small class="text-muted">
-                        <i class="bi bi-eye"></i> 89회 조회
-                      </small>
-                    </div>
                   </div>
                 </a>
               </article>
@@ -493,12 +480,11 @@
                       <i class="bi bi-calendar"></i>
                       2024.06.18
                     </span>
+                    <span class="post-views">
+                      <i class="bi bi-eye"></i>
+                      156회
+                    </span>
                   </div>
-                    <div class="post-stats mt-2">
-                      <small class="text-muted">
-                        <i class="bi bi-eye"></i> 156회 조회
-                      </small>
-                    </div>
                   </div>
                 </a>
               </article>
@@ -561,7 +547,7 @@
     </section>
 
   </main>
-
+<%@ include file="common/footer.jsp" %> 
   <!-- Vendor JS Files -->
   <script src="<c:url value='/assets/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
   <script src="<c:url value='/assets/vendor/aos/aos.js'/>"></script>

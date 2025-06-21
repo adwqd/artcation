@@ -155,10 +155,9 @@
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="<c:url value='/'/>">홈</a></li>
-          <li><a href="<c:url value='/#about'/>">예술인 소개</a></li>
+          <li><a href="<c:url value='/#about'/>">아트케이션 고성이란?</a></li>
           <li><a href="<c:url value='/blog'/>" class="active">예술인 기록</a></li>
           <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
-          <li><a href="<c:url value='/#promotions'/>">홍보 및 공지</a></li>
   
           <c:choose>
             <c:when test="${not empty sessionScope.loginUser}">
@@ -685,3 +684,4 @@ ${comment.createdAt.toString().replace('T', ' ').substring(0, 19)}
 
 </body>
 </html>
+<%@ include file="common/footer.jsp" %> 

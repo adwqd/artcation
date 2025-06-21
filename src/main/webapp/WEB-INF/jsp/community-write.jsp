@@ -87,7 +87,7 @@
         <div class="row justify-content-center">
           <div class="col-lg-8">
             
-            <form action="<c:url value='/community/write'/>" method="post" class="php-email-form">
+            <form action="<c:url value='/community/write'/>" method="post" class="community-write-form">
               
               <!-- 작성자 정보 -->
               <div class="row gy-4 mb-4">
@@ -144,10 +144,65 @@
   <!-- Vendor JS Files -->
   <script src="<c:url value='/assets/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
   <script src="<c:url value='/assets/vendor/aos/aos.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/glightbox/js/glightbox.min.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/isotope-layout/isotope.pkgd.min.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/swiper/swiper-bundle.min.js'/>"></script>
 
   <!-- Main JS File -->
   <script src="<c:url value='/assets/js/main.js'/>"></script>
 
+  <!-- 폼 검증 스크립트 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form');
+      
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          const title = document.getElementById('title').value.trim();
+          const content = document.getElementById('content').value.trim();
+          const authorName = document.getElementById('authorName').value.trim();
+          const guestPw = document.getElementById('guestPw').value.trim();
+          
+          if (!title) {
+            alert('제목을 입력해주세요.');
+            e.preventDefault();
+            document.getElementById('title').focus();
+            return false;
+          }
+          
+          if (!content) {
+            alert('내용을 입력해주세요.');
+            e.preventDefault();
+            document.getElementById('content').focus();
+            return false;
+          }
+          
+          if (!authorName) {
+            alert('작성자명을 입력해주세요.');
+            e.preventDefault();
+            document.getElementById('authorName').focus();
+            return false;
+          }
+          
+          if (!guestPw) {
+            alert('비밀번호를 입력해주세요.');
+            e.preventDefault();
+            document.getElementById('guestPw').focus();
+            return false;
+          }
+          
+          // 폼 제출 중 버튼 비활성화
+          const submitBtn = this.querySelector('button[type="submit"]');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> 등록 중...';
+          }
+        });
+      }
+    });
+  </script>
+
+<%@ include file="common/footer.jsp" %>
 </body>
 
 </html> 

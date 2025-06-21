@@ -101,7 +101,7 @@
         <div class="row justify-content-center">
           <div class="col-lg-8">
             
-            <form action="<c:url value='/artist/write'/>" method="post" enctype="multipart/form-data" class="php-email-form">
+            <form action="<c:url value='/artist/write'/>" method="post" enctype="multipart/form-data" class="artist-write-form">
               
               <!-- 작성자 정보 (읽기 전용) -->
               <div class="row gy-4 mb-4">
@@ -176,6 +176,9 @@
   <!-- Vendor JS Files -->
   <script src="<c:url value='/assets/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
   <script src="<c:url value='/assets/vendor/aos/aos.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/glightbox/js/glightbox.min.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/isotope-layout/isotope.pkgd.min.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/swiper/swiper-bundle.min.js'/>"></script>
 
   <!-- Main JS File -->
   <script src="<c:url value='/assets/js/main.js'/>"></script>
@@ -220,6 +223,66 @@
     document.getElementById('imageFile').value = '';
     document.getElementById('imagePreview').style.display = 'none';
   }
+  </script>
+
+  <!-- 폼 검증 스크립트 -->
+  <script>
+    // 파일 선택 시 미리보기
+    document.getElementById('imageFile').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      const preview = document.getElementById('imagePreview');
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.innerHTML = '<img src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 200px;">';
+        }
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = '';
+      }
+    });
+
+    // 폼 제출 검증
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form');
+      
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          const title = document.getElementById('title').value.trim();
+          const content = document.getElementById('content').value.trim();
+          const image = document.getElementById('imageFile').files[0];
+          
+          if (!title) {
+            alert('제목을 입력해주세요.');
+            e.preventDefault();
+            document.getElementById('title').focus();
+            return false;
+          }
+          
+          if (!content) {
+            alert('내용을 입력해주세요.');
+            e.preventDefault();
+            document.getElementById('content').focus();
+            return false;
+          }
+          
+          if (!image) {
+            alert('이미지를 선택해주세요.');
+            e.preventDefault();
+            document.getElementById('imageFile').focus();
+            return false;
+          }
+          
+          // 폼 제출 중 버튼 비활성화
+          const submitBtn = this.querySelector('button[type="submit"]');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> 등록 중...';
+          }
+        });
+      }
+    });
   </script>
 
 </body>
