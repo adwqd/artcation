@@ -37,7 +37,7 @@
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
       <a href="<c:url value='/'/>" class="logo d-flex align-items-center">
-        <h1 class="sitename">아트케이션 고성</h1>
+        <h1 class="sitename">Artcation Goseong</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
@@ -47,14 +47,7 @@
           <li><a href="<c:url value='/blog'/>" class="active">예술인 기록</a></li>
           <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
           <li><a href="<c:url value='/#promotions'/>">홍보 및 공지</a></li>
-          <li class="dropdown"><a href="#"><span>더보기</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="<c:url value='/artist'/>">예술인 관리</a></li>
-              <li><a href="<c:url value='/starter'/>">공지사항</a></li>
-              <li><a href="<c:url value='/#team'/>">운영진 소개</a></li>
-            </ul>
-          </li>
-          <li><a href="<c:url value='/#contact'/>">문의하기</a></li>
+
           <c:choose>
             <c:when test="${not empty sessionScope.loginUser}">
               <li class="dropdown"><a href="#"><span>${sessionScope.displayName}님</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>

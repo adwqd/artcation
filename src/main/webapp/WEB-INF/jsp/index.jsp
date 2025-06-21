@@ -58,6 +58,20 @@
           <li><a href="<c:url value='/blog'/>">예술인 기록</a></li>
           <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
           <li><a href="#promotions">홍보 및 공지</a></li>
+          
+          <c:choose>
+            <c:when test="${not empty sessionScope.loginUser}">
+              <li class="dropdown"><a href="#"><span>${sessionScope.displayName}님</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                <ul>
+                  <li><a href="<c:url value='/artist/write'/>">기록 작성</a></li>
+                  <li><a href="<c:url value='/logout'/>">로그아웃</a></li>
+                </ul>
+              </li>
+            </c:when>
+            <c:otherwise>
+              <li><a href="<c:url value='/login'/>">로그인</a></li>
+            </c:otherwise>
+          </c:choose>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>

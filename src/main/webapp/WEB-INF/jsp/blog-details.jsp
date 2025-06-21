@@ -70,6 +70,74 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       margin-bottom: 2rem;
     }
+
+    /* 호버 효과 통일 */
+    .btn:hover, .form-control:focus, .form-select:focus, .dropdown-toggle:hover {
+      border-color: #ff6b35 !important;
+      box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+    }
+    
+    .btn-primary {
+      background-color: #ff6b35;
+      border-color: #ff6b35;
+    }
+    
+    .btn-primary:hover {
+      background-color: #e55a2b;
+      border-color: #e55a2b;
+    }
+
+    /* 드롭다운 메뉴 스타일 */
+    .dropdown-menu {
+      border: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+    
+    .dropdown-item:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .dropdown-item.text-danger:hover {
+      background-color: #f8d7da;
+      color: #721c24 !important;
+    }
+    
+    /* 토글 버튼 스타일 */
+    .btn-toggle {
+      background: none;
+      border: none;
+      color: #6c757d;
+      font-size: 1.2rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-toggle:hover {
+      background-color: #f8f9fa;
+      color: #ff6b35;
+      transform: translateY(-1px);
+    }
+
+    /* 드롭다운 토글 버튼 호버 효과 */
+    .btn-outline-secondary:hover {
+      background-color: #ff6b35 !important;
+      border-color: #ff6b35 !important;
+      color: white !important;
+    }
+
+    /* 입력창 호버 및 포커스 효과 */
+    .form-control:hover, .form-control:focus {
+      border-color: #ff6b35 !important;
+      box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+    }
+
+    /* 텍스트에어리어 호버 및 포커스 효과 */
+    textarea.form-control:hover, textarea.form-control:focus {
+      border-color: #ff6b35 !important;
+      box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+    }
   </style>
 </head>
 
@@ -81,7 +149,7 @@
       <a href="<c:url value='/'/>" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="<c:url value='/assets/img/logo.png'/>" alt=""> -->
-        <h1 class="sitename">아트케이션 고성</h1>
+        <h1 class="sitename">Artcation Goseong</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
@@ -91,14 +159,7 @@
           <li><a href="<c:url value='/blog'/>" class="active">예술인 기록</a></li>
           <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
           <li><a href="<c:url value='/#promotions'/>">홍보 및 공지</a></li>
-          <li class="dropdown"><a href="#"><span>더보기</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="<c:url value='/artist'/>">예술인 관리</a></li>
-              <li><a href="<c:url value='/starter'/>">공지사항</a></li>
-              <li><a href="<c:url value='/#team'/>">운영진 소개</a></li>
-            </ul>
-          </li>
-          <li><a href="<c:url value='/#contact'/>">문의하기</a></li>
+  
           <c:choose>
             <c:when test="${not empty sessionScope.loginUser}">
               <li class="dropdown"><a href="#"><span>${sessionScope.displayName}님</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
@@ -147,12 +208,12 @@
 
               <article class="article">
 
-                <!-- 작품 이미지 (메인) -->
-                <c:if test="${not empty post.imageUrl}">
-                  <div class="post-img mb-4">
-                    <img src="<c:url value='${post.imageUrl}'/>" alt="${post.title}" class="artwork-image img-fluid">
-                  </div>
-                </c:if>
+                <!-- 뒤로가기 버튼 -->
+                <div class="mb-4">
+                  <button type="button" class="btn btn-light" onclick="history.back()">
+                    <i class="bi bi-arrow-left"></i> 뒤로가기
+                  </button>
+                </div>
 
                 <!-- 제목과 작업 도구 -->
                 <div class="d-flex justify-content-between align-items-start mb-4">
@@ -160,62 +221,52 @@
                   
                   <!-- 수정/삭제 버튼 (작성자 또는 관리자만 표시) -->
                   <c:if test="${not empty sessionScope.loginUser && (sessionScope.userId == post.artistId || sessionScope.role == 'admin')}">
-                    <div class="btn-group" role="group">
-                      <a href="<c:url value='/artist/edit/${post.postId}'/>" class="btn btn-outline-warning btn-sm">
-                        <i class="bi bi-pencil"></i> 수정
-                      </a>
-                      <form action="<c:url value='/artist/delete/${post.postId}'/>" method="post" style="display: inline;" 
-                            onsubmit="return confirm('정말로 이 기록을 삭제하시겠습니까?');">
-                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                          <i class="bi bi-trash"></i> 삭제
-                        </button>
-                      </form>
+                    <div class="dropdown">
+                      <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                          <a class="dropdown-item" href="<c:url value='/artist/edit/${post.postId}'/>">
+                            <i class="bi bi-pencil me-2"></i>수정
+                          </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                          <button class="dropdown-item text-danger" onclick="deletePost(${post.postId})">
+                            <i class="bi bi-trash me-2"></i>삭제
+                          </button>
+                        </li>
+                      </ul>
                     </div>
                   </c:if>
                 </div>
 
-                <!-- 예술인 정보 -->
-                <div class="artist-info">
-                  <div class="row align-items-center">
-                    <div class="col-md-6">
-                      <h4><i class="bi bi-palette"></i> 예술인: <c:out value="${post.displayName}" default="익명"/></h4>
-                      <p class="mb-0">고성 지역에서 활동하는 예술인입니다.</p>
-                    </div>
-                    <div class="col-md-3 text-center">
-                      <div class="artist-stats">
-                        <small><i class="bi bi-eye"></i> 조회 ${post.viewCount}회</small>
-                      </div>
-                    </div>
-                    <div class="col-md-3 text-end">
-                      <!-- 수정/삭제 버튼 (작성자 또는 관리자만 표시) -->
-                      <c:if test="${sessionScope.loginUser != null && (sessionScope.userId == post.artistId || sessionScope.role == 'admin')}">
-                        <div class="btn-group" role="group">
-                          <a href="<c:url value='/artist/edit/${post.postId}'/>" class="btn btn-warning btn-sm">
-                            <i class="bi bi-pencil-square"></i> 수정
-                          </a>
-                          <button type="button" class="btn btn-danger btn-sm" onclick="deletePost(${post.postId})">
-                            <i class="bi bi-trash"></i> 삭제
-                          </button>
-                        </div>
-                      </c:if>
-                    </div>
+                <!-- 작품 이미지 -->
+                <c:if test="${not empty post.imageUrl}">
+                  <div class="post-img mb-4 text-center">
+                    <img src="<c:url value='${post.imageUrl}'/>" alt="${post.title}" class="img-fluid rounded shadow-sm" style="max-width: 400px; max-height: 300px; object-fit: cover;">
                   </div>
-                </div>
+                </c:if>
 
                 <!-- 게시글 메타 정보 -->
                 <div class="post-meta-enhanced">
-                  <div class="row">
+                  <div class="row text-center">
                     <div class="col-md-4">
                       <i class="bi bi-calendar3 text-primary"></i>
                       <strong>작성일:</strong>
-                      <time datetime="${post.createdAt}">${post.createdAt.year}/${post.createdAt.monthValue}/${post.createdAt.dayOfMonth}</time>
+                      <time datetime="${post.createdAt}">${post.createdAt.toString().replace('T', ' ').substring(0, 19)}</time>
                     </div>
                     <div class="col-md-4">
                       <i class="bi bi-chat-dots text-success"></i>
                       <strong>댓글:</strong>
-                      <span><c:out value="${commentCount}" default="0"/></span>
+                      <span><c:out value="${commentCount}" default="0"/>개</span>
                     </div>
-
+                    <div class="col-md-4">
+                      <i class="bi bi-eye text-info"></i>
+                      <strong>조회:</strong>
+                      <span>${post.viewCount}회</span>
+                    </div>
                   </div>
                 </div>
 
@@ -223,7 +274,6 @@
                 <div class="content">
                   <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
-                      <h5 class="card-title"> </h5>
                       <div class="content-text">
                         <c:choose>
                           <c:when test="${not empty post.content}">
@@ -237,8 +287,6 @@
                     </div>
                   </div>
                 </div>
-
-
 
               </article>
 
@@ -290,8 +338,7 @@
                                   <small class="text-muted me-3">
                                     <c:choose>
                                       <c:when test="${comment.createdAt != null}">
-                                        ${comment.createdAt.year}년 ${comment.createdAt.monthValue}월 ${comment.createdAt.dayOfMonth}일 
-                                        ${comment.createdAt.hour}:${comment.createdAt.minute < 10 ? '0' : ''}${comment.createdAt.minute}
+${comment.createdAt.toString().replace('T', ' ').substring(0, 19)}
                                       </c:when>
                                       <c:otherwise>
                                         방금 전
@@ -311,18 +358,28 @@
                                   </c:choose>
                                   
                                   <c:if test="${canModify || comment.authorId == null}">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                      <button type="button" class="btn btn-outline-warning btn-sm edit-comment-btn" 
-                                              data-comment-id="${comment.commentId}" 
-                                              data-comment-content="<c:out value='${comment.content}'/>"
-                                              data-is-guest="${comment.authorId == null}">
-                                        <i class="bi bi-pencil"></i>
+                                    <div class="dropdown">
+                                      <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
                                       </button>
-                                      <button type="button" class="btn btn-outline-danger btn-sm delete-comment-btn" 
-                                              data-comment-id="${comment.commentId}"
-                                              data-is-guest="${comment.authorId == null}">
-                                        <i class="bi bi-trash"></i>
-                                      </button>
+                                      <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                          <button class="dropdown-item edit-comment-btn" 
+                                                  data-comment-id="${comment.commentId}" 
+                                                  data-comment-content="<c:out value='${comment.content}'/>"
+                                                  data-is-guest="${comment.authorId == null}">
+                                            <i class="bi bi-pencil me-2"></i>수정
+                                          </button>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                          <button class="dropdown-item text-danger delete-comment-btn" 
+                                                  data-comment-id="${comment.commentId}"
+                                                  data-is-guest="${comment.authorId == null}">
+                                            <i class="bi bi-trash me-2"></i>삭제
+                                          </button>
+                                        </li>
+                                      </ul>
                                     </div>
                                   </c:if>
                                 </div>
@@ -435,7 +492,7 @@
                   <i class="bi bi-palette-fill text-white" style="font-size: 2rem;"></i>
                 </div>
                 <h5><c:out value="${post.displayName}" default="예술인"/></h5>
-                <p class="text-muted small mb-3">고성 지역 예술인</p>
+                <p class="text-muted small mb-3">아트케이션 참여 예술인</p>
                 
                 <div class="row text-center w-100">
                   <div class="col-6">
@@ -455,7 +512,7 @@
             <!-- 검색 위젯 -->
             <div class="sidebar-widget-korean">
               <h5 class="widget-title mb-3">
-                <i class="bi bi-search text-primary">검색</i>
+                <i class="bi bi-search text-primary"></i> 검색
               </h5>
               <form action="<c:url value='/blog'/>" method="get" class="d-flex">
                 <input type="text" name="search" class="form-control me-2" placeholder="작품명, 예술인명..." value="<c:out value='${param.search}'/>">
@@ -465,12 +522,10 @@
               </form>
             </div>
 
-
-
             <!-- 최근 작품 위젯 -->
             <div class="sidebar-widget-korean">
               <h5 class="widget-title mb-3">
-                <i class="bi bi-clock-history text-primary"></i> <c:out value="${post.displayName}"/>님의 다른 글
+                <i class="bi bi-clock-history text-primary"></i> <c:out value="${post.displayName}"/>님의 다른 작품
               </h5>
               
               <c:choose>
@@ -500,8 +555,6 @@
               </c:choose>
             </div>
 
-
-
           </div>
         </div>
 
@@ -522,25 +575,28 @@
   <!-- 댓글 관리 JavaScript -->
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // 댓글 수정 버튼 이벤트
-    document.querySelectorAll('.edit-comment-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        const commentId = this.dataset.commentId;
-        const content = this.dataset.commentContent;
-        const isGuest = this.dataset.isGuest === 'true';
+    // 이벤트 위임을 사용하여 동적 요소에도 이벤트 적용
+    document.addEventListener('click', function(e) {
+      // 댓글 수정 버튼 클릭
+      if (e.target.closest('.edit-comment-btn')) {
+        e.preventDefault();
+        const btn = e.target.closest('.edit-comment-btn');
+        const commentId = btn.dataset.commentId;
+        const content = btn.dataset.commentContent;
+        const isGuest = btn.dataset.isGuest === 'true';
         
         editComment(commentId, content, isGuest);
-      });
-    });
-    
-    // 댓글 삭제 버튼 이벤트
-    document.querySelectorAll('.delete-comment-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        const commentId = this.dataset.commentId;
-        const isGuest = this.dataset.isGuest === 'true';
+      }
+      
+      // 댓글 삭제 버튼 클릭
+      if (e.target.closest('.delete-comment-btn')) {
+        e.preventDefault();
+        const btn = e.target.closest('.delete-comment-btn');
+        const commentId = btn.dataset.commentId;
+        const isGuest = btn.dataset.isGuest === 'true';
         
         deleteComment(commentId, isGuest);
-      });
+      }
     });
   });
 
@@ -548,54 +604,66 @@
     const newContent = prompt('댓글 내용을 수정하세요:', content);
     if (newContent === null || newContent.trim() === '') return;
     
-    let form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '<c:url value="/comment/edit/"/>' + commentId;
-    
-    // 내용 필드
-    let contentInput = document.createElement('input');
-    contentInput.type = 'hidden';
-    contentInput.name = 'content';
-    contentInput.value = newContent.trim();
-    form.appendChild(contentInput);
+    let formData = new FormData();
+    formData.append('content', newContent.trim());
     
     // 게스트인 경우 비밀번호 확인
     if (isGuest) {
       const password = prompt('수정을 위해 비밀번호를 입력하세요:');
       if (password === null || password.trim() === '') return;
-      
-      let pwInput = document.createElement('input');
-      pwInput.type = 'hidden';
-      pwInput.name = 'guestPw';
-      pwInput.value = password.trim();
-      form.appendChild(pwInput);
+      formData.append('guestPw', password.trim());
     }
     
-    document.body.appendChild(form);
-    form.submit();
+    // AJAX 요청
+    fetch('<c:url value="/community/comments/"/>' + commentId + '/edit', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('댓글이 성공적으로 수정되었습니다.');
+        location.reload(); // 페이지 새로고침
+      } else {
+        alert('댓글 수정에 실패했습니다: ' + (data.message || '알 수 없는 오류'));
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('댓글 수정 중 오류가 발생했습니다.');
+    });
   }
 
   function deleteComment(commentId, isGuest) {
     if (!confirm('댓글을 삭제하시겠습니까?')) return;
     
-    let form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '<c:url value="/comment/delete/"/>' + commentId;
+    let formData = new FormData();
     
     // 게스트인 경우 비밀번호 확인
     if (isGuest) {
       const password = prompt('삭제를 위해 비밀번호를 입력하세요:');
       if (password === null || password.trim() === '') return;
-      
-      let pwInput = document.createElement('input');
-      pwInput.type = 'hidden';
-      pwInput.name = 'guestPw';
-      pwInput.value = password.trim();
-      form.appendChild(pwInput);
+      formData.append('guestPw', password.trim());
     }
     
-    document.body.appendChild(form);
-    form.submit();
+    // AJAX 요청
+    fetch('<c:url value="/community/comments/"/>' + commentId + '/delete', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('댓글이 성공적으로 삭제되었습니다.');
+        location.reload(); // 페이지 새로고침
+      } else {
+        alert('댓글 삭제에 실패했습니다: ' + (data.message || '알 수 없는 오류'));
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('댓글 삭제 중 오류가 발생했습니다.');
+    });
   }
 
   // 블로그 글 삭제 함수

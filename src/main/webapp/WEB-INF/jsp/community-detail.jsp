@@ -62,6 +62,45 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       margin-bottom: 2rem;
     }
+    
+    /* 토글 드롭다운 버튼 호버 효과 */
+    .dropdown-toggle:hover,
+    .btn-outline-secondary:hover {
+      background-color: #ff6b35 !important;
+      border-color: #ff6b35 !important;
+      color: white !important;
+    }
+    
+    /* 드롭다운 메뉴 아이템 호버 효과 */
+    .dropdown-item:hover {
+      background-color: #ff6b35 !important;
+      color: white !important;
+    }
+    
+    /* 입력창 호버 효과 */
+    .form-control:hover {
+      border-color: #ff6b35 !important;
+      box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+    }
+    
+    /* 입력창 포커스 효과 */
+    .form-control:focus {
+      border-color: #ff6b35 !important;
+      box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+    }
+    
+    /* 텍스트에리어 호버/포커스 효과 */
+    textarea.form-control:hover,
+    textarea.form-control:focus {
+      border-color: #ff6b35 !important;
+      box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+    }
+    
+    /* 검색 버튼 호버 효과 */
+    .btn-primary:hover {
+      background-color: #ff6b35 !important;
+      border-color: #ff6b35 !important;
+    }
   </style>
 </head>
 
@@ -130,59 +169,81 @@
             <div class="container">
 
               <article class="article">
-
+                                         <div class="col-md-3 text-end">
+                       <button onclick="history.back()" class="btn btn-light">
+                         <i class="bi bi-arrow-left"></i> 뒤로가기
+                       </button>
+                     </div>
                 <!-- 제목과 작업 도구 -->
                 <div class="d-flex justify-content-between align-items-start mb-4">
                   <h2 class="title mb-0"><c:out value="${post.title}" default="제목 없음"/></h2>
                   
-                  <!-- 수정/삭제 버튼 (작성자 또는 관리자만 표시) -->
-                  <c:if test="${not empty sessionScope.loginUser && (sessionScope.userId == post.authorId || sessionScope.role == 'admin')}">
-                    <div class="btn-group" role="group">
-                      <a href="<c:url value='/community/edit-form/${post.postId}'/>" class="btn btn-outline-warning btn-sm">
-                        <i class="bi bi-pencil"></i> 수정
-                      </a>
-                      <form action="<c:url value='/community/delete/${post.postId}'/>" method="post" style="display: inline;" 
-                            onsubmit="return confirm('정말로 이 글을 삭제하시겠습니까?');">
-                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                          <i class="bi bi-trash"></i> 삭제
+                  <!-- 수정/삭제 버튼 (드롭다운) -->
+                  <c:choose>
+                    <c:when test="${post.authorId != null}">
+                      <!-- 로그인 사용자가 작성한 글: 작성자 본인 또는 관리자만 -->
+                      <c:if test="${not empty sessionScope.loginUser && (sessionScope.userId == post.authorId || sessionScope.role == 'admin')}">
+                        <div class="dropdown">
+                          <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="<c:url value='/community/edit-form/${post.postId}'/>">
+                                <i class="bi bi-pencil me-2"></i>수정
+                              </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                              <button class="dropdown-item text-danger" onclick="deletePost(${post.postId})">
+                                <i class="bi bi-trash me-2"></i>삭제
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </c:if>
+                    </c:when>
+                    <c:otherwise>
+                      <!-- 비로그인 사용자가 작성한 글: 누구나 비밀번호로 수정/삭제 가능 -->
+                      <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="bi bi-three-dots-vertical"></i>
                         </button>
-                      </form>
-                    </div>
-                  </c:if>
-                </div>
-
-                <!-- 작성자 정보 -->
-                <div class="community-info">
-                  <div class="row align-items-center">
-                    <div class="col-md-6">
-                      <h4><i class="bi bi-chat-dots"></i> 작성자: <c:out value="${post.authorName}" default="익명"/></h4>
-                      <p class="mb-0">고성 지역 커뮤니티 참여자입니다.</p>
-                    </div>
-                    <div class="col-md-3 text-center">
-                      <div class="author-stats">
-                        <small><i class="bi bi-eye"></i> 조회 ${post.viewCount}회</small>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                          <li>
+                            <a class="dropdown-item" href="<c:url value='/community/edit-form/${post.postId}'/>">
+                              <i class="bi bi-pencil me-2"></i>수정
+                            </a>
+                          </li>
+                          <li><hr class="dropdown-divider"></li>
+                          <li>
+                            <button class="dropdown-item text-danger" onclick="deleteGuestPost(${post.postId})">
+                              <i class="bi bi-trash me-2"></i>삭제
+                            </button>
+                          </li>
+                        </ul>
                       </div>
-                    </div>
-                    <div class="col-md-3 text-end">
-                      <a href="<c:url value='/community'/>" class="btn btn-light">
-                        <i class="bi bi-arrow-left"></i> 목록으로
-                      </a>
-                    </div>
-                  </div>
+                    </c:otherwise>
+                  </c:choose>
                 </div>
 
                 <!-- 게시글 메타 정보 -->
                 <div class="post-meta-enhanced">
                   <div class="row text-center">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                       <i class="bi bi-calendar3 text-primary"></i>
                       <strong>작성일:</strong>
-                      <time datetime="${post.createdAt}">${post.createdAt.year}/${post.createdAt.monthValue}/${post.createdAt.dayOfMonth}</time>
+                      <time datetime="${post.createdAt}">${post.createdAt.toString().replace('T', ' ').substring(0, 19)}</time>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                       <i class="bi bi-chat-dots text-success"></i>
                       <strong>댓글:</strong>
                       <span><c:out value="${commentCount}" default="0"/>개</span>
+                    </div>
+                    <div class="col-md-4">
+                      <i class="bi bi-eye text-info"></i>
+                      <strong>조회:</strong>
+                      <span>${post.viewCount}회</span>
                     </div>
                   </div>
                 </div>
@@ -190,8 +251,7 @@
                 <!-- 글 내용 -->
                 <div class="content">
                   <div class="card border-0 shadow-sm">
-                    <div class="card-body p-4">
-                      <h5 class="card-title"><i class="bi bi-chat-text"></i></h5>
+                    <div class="card-body p-4">                  
                       <div class="content-text">
                         <c:choose>
                           <c:when test="${not empty post.content}">
@@ -256,8 +316,7 @@
                                   <small class="text-muted me-3">
                                     <c:choose>
                                       <c:when test="${comment.createdAt != null}">
-                                        ${comment.createdAt.year}년 ${comment.createdAt.monthValue}월 ${comment.createdAt.dayOfMonth}일 
-                                        ${comment.createdAt.hour}:${comment.createdAt.minute < 10 ? '0' : ''}${comment.createdAt.minute}
+                                        ${comment.createdAt.toString().replace('T', ' ').substring(0, 19)}
                                       </c:when>
                                       <c:otherwise>
                                         방금 전
@@ -277,18 +336,28 @@
                                   </c:choose>
                                   
                                   <c:if test="${canModify || comment.authorId == null}">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                      <button type="button" class="btn btn-outline-warning btn-sm edit-comment-btn" 
-                                              data-comment-id="${comment.commentId}" 
-                                              data-comment-content="<c:out value='${comment.content}'/>"
-                                              data-is-guest="${comment.authorId == null}">
-                                        <i class="bi bi-pencil"></i>
+                                    <div class="dropdown">
+                                      <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
                                       </button>
-                                      <button type="button" class="btn btn-outline-danger btn-sm delete-comment-btn" 
-                                              data-comment-id="${comment.commentId}"
-                                              data-is-guest="${comment.authorId == null}">
-                                        <i class="bi bi-trash"></i>
-                                      </button>
+                                      <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                          <button class="dropdown-item edit-comment-btn" 
+                                                  data-comment-id="${comment.commentId}" 
+                                                  data-comment-content="<c:out value='${comment.content}'/>"
+                                                  data-is-guest="${comment.authorId == null}">
+                                            <i class="bi bi-pencil me-2"></i>수정
+                                          </button>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                          <button class="dropdown-item text-danger delete-comment-btn" 
+                                                  data-comment-id="${comment.commentId}"
+                                                  data-is-guest="${comment.authorId == null}">
+                                            <i class="bi bi-trash me-2"></i>삭제
+                                          </button>
+                                        </li>
+                                      </ul>
                                     </div>
                                   </c:if>
                                 </div>
@@ -450,25 +519,28 @@
   <!-- 댓글 관리 JavaScript -->
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // 댓글 수정 버튼 이벤트
-    document.querySelectorAll('.edit-comment-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        const commentId = this.dataset.commentId;
-        const content = this.dataset.commentContent;
-        const isGuest = this.dataset.isGuest === 'true';
+    // 이벤트 위임을 사용하여 동적 요소에도 이벤트 적용
+    document.addEventListener('click', function(e) {
+      // 댓글 수정 버튼 클릭
+      if (e.target.closest('.edit-comment-btn')) {
+        e.preventDefault();
+        const btn = e.target.closest('.edit-comment-btn');
+        const commentId = btn.dataset.commentId;
+        const content = btn.dataset.commentContent;
+        const isGuest = btn.dataset.isGuest === 'true';
         
         editComment(commentId, content, isGuest);
-      });
-    });
-    
-    // 댓글 삭제 버튼 이벤트
-    document.querySelectorAll('.delete-comment-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        const commentId = this.dataset.commentId;
-        const isGuest = this.dataset.isGuest === 'true';
+      }
+      
+      // 댓글 삭제 버튼 클릭
+      if (e.target.closest('.delete-comment-btn')) {
+        e.preventDefault();
+        const btn = e.target.closest('.delete-comment-btn');
+        const commentId = btn.dataset.commentId;
+        const isGuest = btn.dataset.isGuest === 'true';
         
         deleteComment(commentId, isGuest);
-      });
+      }
     });
   });
 
@@ -476,51 +548,96 @@
     const newContent = prompt('댓글 내용을 수정하세요:', content);
     if (newContent === null || newContent.trim() === '') return;
     
-    let form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '<c:url value="/comment/edit/"/>' + commentId;
-    
-    // 내용 필드
-    let contentInput = document.createElement('input');
-    contentInput.type = 'hidden';
-    contentInput.name = 'content';
-    contentInput.value = newContent.trim();
-    form.appendChild(contentInput);
+    let formData = new FormData();
+    formData.append('content', newContent.trim());
     
     // 게스트인 경우 비밀번호 확인
     if (isGuest) {
       const password = prompt('수정을 위해 비밀번호를 입력하세요:');
       if (password === null || password.trim() === '') return;
-      
-      let pwInput = document.createElement('input');
-      pwInput.type = 'hidden';
-      pwInput.name = 'guestPw';
-      pwInput.value = password.trim();
-      form.appendChild(pwInput);
+      formData.append('guestPw', password.trim());
     }
     
-    document.body.appendChild(form);
-    form.submit();
+    // AJAX 요청
+    fetch('<c:url value="/community/comments/"/>' + commentId + '/edit', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('댓글이 성공적으로 수정되었습니다.');
+        location.reload(); // 페이지 새로고침
+      } else {
+        alert('댓글 수정에 실패했습니다: ' + (data.message || '알 수 없는 오류'));
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('댓글 수정 중 오류가 발생했습니다.');
+    });
   }
 
   function deleteComment(commentId, isGuest) {
     if (!confirm('댓글을 삭제하시겠습니까?')) return;
     
-    let form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '<c:url value="/comment/delete/"/>' + commentId;
+    let formData = new FormData();
     
     // 게스트인 경우 비밀번호 확인
     if (isGuest) {
       const password = prompt('삭제를 위해 비밀번호를 입력하세요:');
       if (password === null || password.trim() === '') return;
-      
-      let pwInput = document.createElement('input');
-      pwInput.type = 'hidden';
-      pwInput.name = 'guestPw';
-      pwInput.value = password.trim();
-      form.appendChild(pwInput);
+      formData.append('guestPw', password.trim());
     }
+    
+    // AJAX 요청
+    fetch('<c:url value="/community/comments/"/>' + commentId + '/delete', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('댓글이 성공적으로 삭제되었습니다.');
+        location.reload(); // 페이지 새로고침
+      } else {
+        alert('댓글 삭제에 실패했습니다: ' + (data.message || '알 수 없는 오류'));
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('댓글 삭제 중 오류가 발생했습니다.');
+    });
+  }
+
+  // 커뮤니티 글 삭제 함수 (로그인 사용자)
+  function deletePost(postId) {
+    if (!confirm('이 글을 삭제하시겠습니까?\n삭제된 글은 복구할 수 없습니다.')) return;
+    
+    let form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<c:url value="/community/delete/"/>' + postId;
+    
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  // 비로그인 사용자 글 삭제 함수
+  function deleteGuestPost(postId) {
+    if (!confirm('이 글을 삭제하시겠습니까?\n삭제된 글은 복구할 수 없습니다.')) return;
+    
+    const password = prompt('삭제를 위해 작성시 입력한 비밀번호를 입력하세요:');
+    if (password === null || password.trim() === '') return;
+    
+    let form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<c:url value="/community/delete/"/>' + postId;
+    
+    let pwInput = document.createElement('input');
+    pwInput.type = 'hidden';
+    pwInput.name = 'guestPw';
+    pwInput.value = password.trim();
+    form.appendChild(pwInput);
     
     document.body.appendChild(form);
     form.submit();

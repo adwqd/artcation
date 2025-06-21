@@ -14,7 +14,6 @@ import com.webserver.project.mapper.CommunityMapper;
 import com.webserver.project.mapper.CommentMapper;
 import com.webserver.project.mapper.PromotionsMapper;
 import com.webserver.project.model.ArtistPost;
-import com.webserver.project.model.CommunityPost;
 
 import java.util.Date;
 

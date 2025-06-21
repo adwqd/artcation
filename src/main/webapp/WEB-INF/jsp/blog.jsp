@@ -178,7 +178,7 @@
       color: #333;
       background-color: #ffffff;
       border-color: #dee2e6;
-      padding: 0.75rem 1rem;
+      padding: 0.3rem 1rem;
       margin: 0 2px;
       border-radius: 5px;
       transition: all 0.3s ease;
