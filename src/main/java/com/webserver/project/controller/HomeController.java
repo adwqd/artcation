@@ -46,6 +46,7 @@ public class HomeController {
     @GetMapping("/blog")
     public String blog(@RequestParam(defaultValue = "latest") String sort, 
                       @RequestParam(defaultValue = "1") int page,
+                      @RequestParam(required = false) String search,
                       Model model, HttpSession session) {
         // 세션 정보 로깅
         log.info("=== Blog 페이지 접근 ===");
@@ -54,22 +55,33 @@ public class HomeController {
         log.info("Username: {}", session.getAttribute("username"));
         log.info("Display Name: {}", session.getAttribute("displayName"));
         log.info("Role: {}", session.getAttribute("role"));
-        log.info("정렬 옵션: {}, 페이지: {}", sort, page);
+        log.info("정렬 옵션: {}, 페이지: {}, 검색어: {}", sort, page, search);
         
         // 페이지네이션 설정
         int pageSize = 6; // 한 페이지당 6개
         int offset = (page - 1) * pageSize;
         
-        // 전체 게시글 수와 페이지 정보 계산
-        int totalPosts = artistPostMapper.getTotalCount();
+        // 검색어가 있는 경우와 없는 경우 처리
+        int totalPosts;
+        if (search != null && !search.trim().isEmpty()) {
+            // 검색 결과 개수
+            totalPosts = artistPostMapper.getSearchCount(search.trim());
+            // 검색 결과 목록
+            model.addAttribute("blogPosts", artistPostMapper.findBySearchWithSortAndPagination(search.trim(), sort, pageSize, offset));
+        } else {
+            // 전체 게시글 수
+            totalPosts = artistPostMapper.getTotalCount();
+            // 전체 목록
+            model.addAttribute("blogPosts", artistPostMapper.findAllWithSortAndPagination(sort, pageSize, offset));
+        }
+        
         int totalPages = (int) Math.ceil((double) totalPosts / pageSize);
         
-        // 예술인 기록 목록 (블로그 역할) - 정렬과 페이지네이션 적용
-        model.addAttribute("blogPosts", artistPostMapper.findAllWithSortAndPagination(sort, pageSize, offset));
         model.addAttribute("currentSort", sort);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalPosts", totalPosts);
+        model.addAttribute("searchKeyword", search);
         
         return "blog";
     }

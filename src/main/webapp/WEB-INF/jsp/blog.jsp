@@ -203,6 +203,30 @@
       background-color: #e9ecef;
       border-color: #dee2e6;
     }
+
+    /* 검색 결과 스타일 */
+    .search-result-info {
+      background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+    }
+
+    .search-form .form-control:focus {
+      border-color: #ff6b35;
+      box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+    }
+
+    .search-form .btn-primary {
+      background-color: #ff6b35;
+      border-color: #ff6b35;
+    }
+
+    .search-form .btn-primary:hover {
+      background-color: #e55a2b;
+      border-color: #e55a2b;
+    }
   </style>
 </head>
 
@@ -249,14 +273,44 @@
     <!-- Page Title -->
     <div class="page-title dark-background">
       <div class="container position-relative">
-        <h1>예술인 기록</h1>
+        <h1>예술인 <span style="color: #ff6b35;">기록</span></h1>
         <p>고성 지역 예술인들의 창작 활동과 작품 이야기를 만나보세요</p>
-        <nav class="breadcrumbs">
-          <ol>
-            <li><a href="<c:url value='/'/>">홈</a></li>
-            <li class="current">예술인 기록</li>
-          </ol>
-        </nav>
+        
+        <!-- 검색 폼 -->
+        <div class="mt-4">
+          <div class="d-flex justify-content-center mb-3">
+            <div class="col-lg-6 col-xl-5">
+              <form action="<c:url value='/blog'/>" method="get" class="search-form">
+                <div class="input-group">
+                  <input type="text" name="search" class="form-control" placeholder="제목 또는 예술인명으로 검색..." value="<c:out value='${searchKeyword}'/>">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i> 검색
+                  </button>
+                </div>
+                <!-- 현재 정렬과 페이지 유지를 위한 숨겨진 필드 -->
+                <input type="hidden" name="sort" value="${currentSort}">
+                <input type="hidden" name="page" value="1">
+              </form>
+            </div>
+          </div>
+          
+          <!-- 검색 초기화 버튼과 breadcrumbs -->
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <c:if test="${not empty searchKeyword}">
+                <a href="<c:url value='/blog'/>" class="btn btn-outline-light">
+                  <i class="bi bi-x-circle"></i> 검색 초기화
+                </a>
+              </c:if>
+            </div>
+            <nav class="breadcrumbs">
+              <ol>
+                <li><a href="<c:url value='/'/>">홈</a></li>
+                <li class="current">예술인 기록</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
       </div>
     </div><!-- End Page Title -->
 
@@ -264,18 +318,12 @@
     <section class="blog section">
       <div class="container">
         
-        <!-- Action Buttons and Sorting -->
+                
+        <!-- 정렬 옵션 -->
         <div class="row mb-4">
-          <div class="col-lg-8 text-center text-lg-start">
-            <c:choose>
-              <c:when test="${not empty sessionScope.loginUser && (sessionScope.role == 'artist' || sessionScope.role == 'admin')}">
-              </c:when>
-
-            </c:choose>
-          </div>
-          <div class="col-lg-4 text-center text-lg-end">
-            <div class="d-flex align-items-center justify-content-center justify-content-lg-end">
-              <label for="sortSelect" class="form-label me-2 mb-0">정렬:</label>
+          <div class="col-12">
+            <div class="d-flex align-items-center">
+              <label for="sortSelect" class="form-label me-2 mb-0"></label>
               <select id="sortSelect" class="form-select" style="width: auto;" onchange="changeSortOrder()">
                 <option value="latest" ${currentSort == 'latest' ? 'selected' : ''}>최신순</option>
                 <option value="views" ${currentSort == 'views' ? 'selected' : ''}>조회순</option>
@@ -284,6 +332,19 @@
             </div>
           </div>
         </div>
+         
+        <!-- 검색 결과 정보 -->
+        <c:if test="${not empty searchKeyword}">
+          <div class="search-result-info">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-search me-2" style="font-size: 1.5rem;"></i>
+              <div>
+                <h5 class="mb-1">검색 결과</h5>
+                <p class="mb-0">"<strong>${searchKeyword}</strong>" 검색 결과 총 <strong>${totalPosts}</strong>개의 글을 찾았습니다.</p>
+              </div>
+            </div>
+          </div>
+        </c:if>
         
         <div class="row gy-3">
           
@@ -338,8 +399,24 @@
             </div>
           </c:forEach>
 
-          <!-- Sample Blog Posts (when no data) -->
-          <c:if test="${empty blogPosts}">
+          <!-- 검색 결과가 없을 때 -->
+          <c:if test="${empty blogPosts && not empty searchKeyword}">
+            <div class="col-12 text-center py-5">
+              <div class="alert alert-info">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                "<strong>${searchKeyword}</strong>"에 대한 검색 결과가 없습니다.
+                <br><br>
+                <small class="text-muted">
+                  • 다른 키워드로 검색해보세요<br>
+                  • 예술인 이름이나 작품명을 정확히 입력해보세요<br>
+                  • 검색어를 줄여서 다시 시도해보세요
+                </small>
+              </div>
+            </div>
+          </c:if>
+
+          <!-- Sample Blog Posts (when no data and no search) -->
+          <c:if test="${empty blogPosts && empty searchKeyword}">
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
               <article class="blog-post">
                 <a href="#" class="card-link">
@@ -439,7 +516,7 @@
                   <!-- 이전 페이지 -->
                   <c:if test="${currentPage > 1}">
                     <li class="page-item">
-                      <a class="page-link" href="?page=${currentPage - 1}&sort=${currentSort}" aria-label="Previous">
+                      <a class="page-link" href="?page=${currentPage - 1}&sort=${currentSort}<c:if test='${not empty searchKeyword}'>&search=${searchKeyword}</c:if>" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                       </a>
                     </li>
@@ -448,14 +525,14 @@
                   <!-- 페이지 번호들 -->
                   <c:forEach var="i" begin="1" end="${totalPages}">
                     <li class="page-item ${i == currentPage ? 'active' : ''}">
-                      <a class="page-link" href="?page=${i}&sort=${currentSort}">${i}</a>
+                      <a class="page-link" href="?page=${i}&sort=${currentSort}<c:if test='${not empty searchKeyword}'>&search=${searchKeyword}</c:if>">${i}</a>
                     </li>
                   </c:forEach>
                   
                   <!-- 다음 페이지 -->
                   <c:if test="${currentPage < totalPages}">
                     <li class="page-item">
-                      <a class="page-link" href="?page=${currentPage + 1}&sort=${currentSort}" aria-label="Next">
+                      <a class="page-link" href="?page=${currentPage + 1}&sort=${currentSort}<c:if test='${not empty searchKeyword}'>&search=${searchKeyword}</c:if>" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                       </a>
                     </li>
@@ -466,7 +543,14 @@
               <!-- 페이지 정보 -->
               <div class="text-center mt-3">
                 <small class="text-muted">
-                  총 ${totalPosts}개의 글 중 ${(currentPage - 1) * 6 + 1} - ${currentPage * 6 > totalPosts ? totalPosts : currentPage * 6}번째 글
+                  <c:choose>
+                    <c:when test="${not empty searchKeyword}">
+                      "${searchKeyword}" 검색 결과: 총 ${totalPosts}개 중 ${(currentPage - 1) * 6 + 1} - ${currentPage * 6 > totalPosts ? totalPosts : currentPage * 6}번째
+                    </c:when>
+                    <c:otherwise>
+                      총 ${totalPosts}개의 글 중 ${(currentPage - 1) * 6 + 1} - ${currentPage * 6 > totalPosts ? totalPosts : currentPage * 6}번째 글
+                    </c:otherwise>
+                  </c:choose>
                 </small>
               </div>
             </div>

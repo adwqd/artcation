@@ -149,13 +149,17 @@
       <div class="container position-relative">
         <h1>커뮤니티 상세보기</h1>
         <p>고성 지역 예술인들과 시민들이 소통하고 공유하는 공간</p>
-        <nav class="breadcrumbs">
-          <ol>
-            <li><a href="<c:url value='/'/>">홈</a></li>
-            <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
-            <li class="current"><c:out value="${post.title}" default="상세보기"/></li>
-          </ol>
-        </nav>
+        
+        <!-- breadcrumbs를 오른쪽 아래로 이동 -->
+        <div class="d-flex justify-content-end mt-4">
+          <nav class="breadcrumbs">
+            <ol>
+              <li><a href="<c:url value='/'/>">홈</a></li>
+              <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
+              <li class="current"><c:out value="${post.title}" default="상세보기"/></li>
+            </ol>
+          </nav>
+        </div>
       </div>
     </div><!-- End Page Title -->
 
@@ -168,12 +172,14 @@
           <section id="community-details" class="blog-details section">
             <div class="container">
 
+              <!-- 뒤로가기 버튼 -->
+              <div class="mb-4">
+                <button type="button" class="btn btn-light" onclick="history.back()">
+                  <i class="bi bi-arrow-left"></i> 뒤로가기
+                </button>
+              </div>
+
               <article class="article">
-                                         <div class="col-md-3 text-end">
-                       <button onclick="history.back()" class="btn btn-light">
-                         <i class="bi bi-arrow-left"></i> 뒤로가기
-                       </button>
-                     </div>
                 <!-- 제목과 작업 도구 -->
                 <div class="d-flex justify-content-between align-items-start mb-4">
                   <h2 class="title mb-0"><c:out value="${post.title}" default="제목 없음"/></h2>
@@ -489,7 +495,7 @@
             <!-- 검색 위젯 -->
             <div class="sidebar-widget-korean">
               <h5 class="widget-title mb-3">
-                <i class="bi bi-search text-primary"></i> 커뮤니티 검색
+                <i class="bi bi-search text-primary"></i> 검색
               </h5>
               <form action="<c:url value='/community'/>" method="get" class="d-flex">
                 <input type="text" name="search" class="form-control me-2" placeholder="제목, 작성자..." value="<c:out value='${param.search}'/>">
@@ -635,7 +641,7 @@
     
     let pwInput = document.createElement('input');
     pwInput.type = 'hidden';
-    pwInput.name = 'guestPw';
+    pwInput.name = 'password';
     pwInput.value = password.trim();
     form.appendChild(pwInput);
     

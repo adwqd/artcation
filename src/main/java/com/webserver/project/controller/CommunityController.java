@@ -30,22 +30,33 @@ public class CommunityController {
   @GetMapping
   public String list(@RequestParam(defaultValue = "latest") String sort, 
                     @RequestParam(defaultValue = "1") int page,
+                    @RequestParam(required = false) String search,
                     Model m) {
     
     // 페이지네이션 설정
     int pageSize = 10; // 한 페이지당 10개
     int offset = (page - 1) * pageSize;
     
-    // 전체 게시글 수와 페이지 정보 계산
-    int totalPosts = svc.getTotalCount();
+    List<CommunityPost> posts;
+    int totalPosts;
+    
+    // 검색어가 있는 경우
+    if (search != null && !search.trim().isEmpty()) {
+      posts = svc.searchWithSortAndPagination(search.trim(), sort, pageSize, offset);
+      totalPosts = svc.getSearchCount(search.trim());
+    } else {
+      posts = svc.listWithSortAndPagination(sort, pageSize, offset);
+      totalPosts = svc.getTotalCount();
+    }
+    
     int totalPages = (int) Math.ceil((double) totalPosts / pageSize);
     
-    // 커뮤니티 게시글 목록 - 정렬과 페이지네이션 적용
-    m.addAttribute("posts", svc.listWithSortAndPagination(sort, pageSize, offset));
+    m.addAttribute("posts", posts);
     m.addAttribute("currentSort", sort);
     m.addAttribute("currentPage", page);
     m.addAttribute("totalPages", totalPages);
     m.addAttribute("totalPosts", totalPosts);
+    m.addAttribute("searchKeyword", search);
     
     return "community";
   }
@@ -116,8 +127,40 @@ public class CommunityController {
   public String update(@PathVariable int id,
                       @RequestParam String title,
                       @RequestParam String content,
+                      @RequestParam(required = false) String password,
+                      HttpSession session,
                       RedirectAttributes redirectAttributes) {
     try {
+      CommunityPost existingPost = svc.getWithoutViewIncrement(id);
+      if (existingPost == null) {
+        redirectAttributes.addFlashAttribute("error", "게시글을 찾을 수 없습니다.");
+        return "redirect:/community";
+      }
+      
+      // 권한 확인
+      Integer userId = (Integer) session.getAttribute("userId");
+      String role = (String) session.getAttribute("role");
+      
+      boolean canUpdate = false;
+      if ("admin".equals(role)) {
+        canUpdate = true;
+      } else if (existingPost.getAuthorId() != null && userId != null && existingPost.getAuthorId().equals(userId)) {
+        // 로그인 사용자가 작성한 글: 작성자 본인만
+        canUpdate = true;
+      } else if (existingPost.getAuthorId() == null) {
+        // 비로그인 사용자가 작성한 글: 비밀번호 확인
+        if (password == null || !svc.validateGuestPassword(id, password)) {
+          redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
+          return "redirect:/community/edit-form/" + id;
+        }
+        canUpdate = true;
+      }
+      
+      if (!canUpdate) {
+        redirectAttributes.addFlashAttribute("error", "수정 권한이 없습니다.");
+        return "redirect:/community/view/" + id;
+      }
+      
       CommunityPost post = new CommunityPost();
       post.setPostId(id);
       post.setTitle(title);

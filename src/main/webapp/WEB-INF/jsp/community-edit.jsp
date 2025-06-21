@@ -126,6 +126,17 @@
                 </div>
               </div>
 
+              <!-- 비로그인 사용자 글인 경우 비밀번호 확인 -->
+              <c:if test="${post.authorId == null}">
+                <div class="row gy-4 mb-4">
+                  <div class="col-md-12">
+                    <label for="password" class="form-label">비밀번호 확인 <span class="text-danger">*</span></label>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="글 작성시 입력한 비밀번호를 입력하세요" required>
+                    <small class="form-text text-muted">수정을 위해 작성시 입력한 비밀번호가 필요합니다.</small>
+                  </div>
+                </div>
+              </c:if>
+
               <!-- 게시글 정보 -->
               <div class="row gy-4 mb-4">
                 <div class="col-md-12">

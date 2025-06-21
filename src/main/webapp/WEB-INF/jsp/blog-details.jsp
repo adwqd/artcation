@@ -187,13 +187,17 @@
       <div class="container position-relative">
         <h1>예술인 기록 상세보기</h1>
         <p>고성 지역 예술인들의 창작 활동과 작품 이야기를 만나보세요</p>
-        <nav class="breadcrumbs">
-          <ol>
-            <li><a href="<c:url value='/'/>">홈</a></li>
-            <li><a href="<c:url value='/blog'/>">예술인 기록</a></li>
-            <li class="current"><c:out value="${post.title}" default="상세보기"/></li>
-          </ol>
-        </nav>
+        
+        <!-- breadcrumbs를 오른쪽 아래로 이동 -->
+        <div class="d-flex justify-content-end mt-4">
+          <nav class="breadcrumbs">
+            <ol>
+              <li><a href="<c:url value='/'/>">홈</a></li>
+              <li><a href="<c:url value='/blog'/>">예술인 기록</a></li>
+              <li class="current"><c:out value="${post.title}" default="상세보기"/></li>
+            </ol>
+          </nav>
+        </div>
       </div>
     </div><!-- End Page Title -->
 
@@ -206,14 +210,14 @@
           <section id="blog-details" class="blog-details section">
             <div class="container">
 
-              <article class="article">
+              <!-- 뒤로가기 버튼 -->
+              <div class="mb-4">
+                <button type="button" class="btn btn-light" onclick="history.back()">
+                  <i class="bi bi-arrow-left"></i> 뒤로가기
+                </button>
+              </div>
 
-                <!-- 뒤로가기 버튼 -->
-                <div class="mb-4">
-                  <button type="button" class="btn btn-light" onclick="history.back()">
-                    <i class="bi bi-arrow-left"></i> 뒤로가기
-                  </button>
-                </div>
+              <article class="article">
 
                 <!-- 제목과 작업 도구 -->
                 <div class="d-flex justify-content-between align-items-start mb-4">
@@ -515,7 +519,7 @@ ${comment.createdAt.toString().replace('T', ' ').substring(0, 19)}
                 <i class="bi bi-search text-primary"></i> 검색
               </h5>
               <form action="<c:url value='/blog'/>" method="get" class="d-flex">
-                <input type="text" name="search" class="form-control me-2" placeholder="작품명, 예술인명..." value="<c:out value='${param.search}'/>">
+                <input type="text" name="search" class="form-control me-2" placeholder="제목, 예술인명..." value="<c:out value='${param.search}'/>">
                 <button type="submit" class="btn btn-primary">
                   <i class="bi bi-search"></i>
                 </button>

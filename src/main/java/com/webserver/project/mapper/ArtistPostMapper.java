@@ -105,4 +105,26 @@ public interface ArtistPostMapper {
     List<ArtistPost> findRecentPostsByArtistExcludingCurrent(@Param("artistId") Integer artistId, 
                                                             @Param("currentPostId") Integer currentPostId, 
                                                             @Param("limit") int limit);
+    
+    // 검색 결과 조회 (페이지네이션과 정렬 지원) - 제목과 예술인명만 검색
+    @Select("<script>" +
+            "SELECT ap.post_id as postId, ap.artist_id as artistId, ap.title, ap.content, " +
+            "ap.image_url as imageUrl, ap.image_name as imageName, ap.view_count as viewCount, " +
+            "ap.created_at as createdAt, ap.updated_at as updatedAt, u.display_name as displayName " +
+            "FROM ArtistPosts ap JOIN Users u ON ap.artist_id = u.user_id " +
+            "WHERE (ap.title LIKE CONCAT('%', #{search}, '%') OR u.display_name LIKE CONCAT('%', #{search}, '%')) " +
+            "ORDER BY " +
+            "<choose>" +
+            "<when test='sort == \"oldest\"'>ap.created_at ASC</when>" +
+            "<when test='sort == \"views\"'>ap.view_count DESC, ap.created_at DESC</when>" +
+            "<otherwise>ap.created_at DESC</otherwise>" +
+            "</choose>" +
+            " LIMIT #{limit} OFFSET #{offset}" +
+            "</script>")
+    List<ArtistPost> findBySearchWithSortAndPagination(@Param("search") String search, @Param("sort") String sort, @Param("limit") int limit, @Param("offset") int offset);
+    
+    // 검색 결과 개수 조회 - 제목과 예술인명만 검색
+    @Select("SELECT COUNT(*) FROM ArtistPosts ap JOIN Users u ON ap.artist_id = u.user_id " +
+            "WHERE (ap.title LIKE CONCAT('%', #{search}, '%') OR u.display_name LIKE CONCAT('%', #{search}, '%'))")
+    int getSearchCount(@Param("search") String search);
 } 

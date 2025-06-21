@@ -86,6 +86,30 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       .community-row {
         transition: all 0.2s ease;
       }
+
+      /* 검색 결과 스타일 */
+      .search-result-info {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+      }
+
+      .search-form .form-control:focus {
+        border-color: #ff6b35;
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+      }
+
+      .search-form .btn-primary {
+        background-color: #ff6b35;
+        border-color: #ff6b35;
+      }
+
+      .search-form .btn-primary:hover {
+        background-color: #e55a2b;
+        border-color: #e55a2b;
+      }
     </style>
   </head>
 
@@ -133,12 +157,42 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         <div class="container position-relative">
           <h1>커뮤니티</h1>
           <p>고성 지역 예술인들과 시민들이 소통하고 공유하는 공간</p>
-          <nav class="breadcrumbs">
-            <ol>
-              <li><a href="<c:url value='/'/>">홈</a></li>
-              <li class="current">커뮤니티</li>
-            </ol>
-          </nav>
+          
+          <!-- 검색 폼 -->
+          <div class="mt-4">
+            <div class="d-flex justify-content-center mb-3">
+              <div class="col-lg-6 col-xl-5">
+                <form action="<c:url value='/community'/>" method="get" class="search-form">
+                  <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="제목 또는 작성자명으로 검색..." value="<c:out value='${searchKeyword}'/>">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="bi bi-search"></i> 검색
+                    </button>
+                  </div>
+                  <!-- 현재 정렬과 페이지 유지를 위한 숨겨진 필드 -->
+                  <input type="hidden" name="sort" value="${currentSort}">
+                  <input type="hidden" name="page" value="1">
+                </form>
+              </div>
+            </div>
+            
+            <!-- 검색 초기화 버튼과 breadcrumbs -->
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <c:if test="${not empty searchKeyword}">
+                  <a href="<c:url value='/community'/>" class="btn btn-outline-light">
+                    <i class="bi bi-x-circle"></i> 검색 초기화
+                  </a>
+                </c:if>
+              </div>
+              <nav class="breadcrumbs">
+                <ol>
+                  <li><a href="<c:url value='/'/>">홈</a></li>
+                  <li class="current">커뮤니티</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
         </div>
       </div><!-- End Page Title -->
 
@@ -159,7 +213,8 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
           </c:if>
-          <!-- Action Buttons and Sorting -->
+          
+          <!-- 정렬 옵션과 글쓰기 버튼 -->
           <div class="row mb-4">
             <div class="col-lg-8 d-flex align-items-center">
               <div class="d-flex align-items-center">
@@ -172,14 +227,24 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
               </div>
             </div>
             <div class="col-lg-4 text-end">
-              <a
-                href="<c:url value='/community/write'/>"
-                class="btn btn-primary"
-              >
+              <a href="<c:url value='/community/write'/>" class="btn btn-primary">
                 <i class="bi bi-pencil"></i> 글쓰기
               </a>
             </div>
           </div>
+
+          <!-- 검색 결과 정보 -->
+          <c:if test="${not empty searchKeyword}">
+            <div class="search-result-info">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-search me-2" style="font-size: 1.5rem;"></i>
+                <div>
+                  <strong>"${searchKeyword}"</strong> 검색 결과
+                  <div class="small mt-1">총 ${totalPosts}개의 글을 찾았습니다.</div>
+                </div>
+              </div>
+            </div>
+          </c:if>
 
           <!-- Posts List -->
           <div class="row">
@@ -255,7 +320,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                     <!-- 이전 페이지 -->
                     <c:if test="${currentPage > 1}">
                       <li class="page-item">
-                        <a class="page-link" href="?page=${currentPage - 1}&sort=${currentSort}" aria-label="Previous">
+                        <a class="page-link" href="?page=${currentPage - 1}&sort=${currentSort}<c:if test='${not empty searchKeyword}'>&search=${searchKeyword}</c:if>" aria-label="Previous">
                           <span aria-hidden="true">&laquo;</span>
                         </a>
                       </li>
@@ -264,14 +329,14 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                     <!-- 페이지 번호들 -->
                     <c:forEach var="i" begin="1" end="${totalPages}">
                       <li class="page-item ${i == currentPage ? 'active' : ''}">
-                        <a class="page-link" href="?page=${i}&sort=${currentSort}">${i}</a>
+                        <a class="page-link" href="?page=${i}&sort=${currentSort}<c:if test='${not empty searchKeyword}'>&search=${searchKeyword}</c:if>">${i}</a>
                       </li>
                     </c:forEach>
                     
                     <!-- 다음 페이지 -->
                     <c:if test="${currentPage < totalPages}">
                       <li class="page-item">
-                        <a class="page-link" href="?page=${currentPage + 1}&sort=${currentSort}" aria-label="Next">
+                        <a class="page-link" href="?page=${currentPage + 1}&sort=${currentSort}<c:if test='${not empty searchKeyword}'>&search=${searchKeyword}</c:if>" aria-label="Next">
                           <span aria-hidden="true">&raquo;</span>
                         </a>
                       </li>
@@ -310,6 +375,61 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       .community-row {
         transition: all 0.2s ease;
       }
+
+      /* 페이지네이션 스타일 */
+      .pagination .page-link {
+        color: #333;
+        background-color: #ffffff;
+        border-color: #dee2e6;
+        padding: 0.3rem 1rem;
+        margin: 0 2px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+      }
+
+      .pagination .page-link:hover {
+        color: #333;
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        transform: translateY(-2px);
+      }
+
+      .pagination .page-item.active .page-link {
+        color: #ffffff;
+        background-color: #ff6b35;
+        border-color: #ff6b35;
+        box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+      }
+
+      .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+      }
+
+      /* 검색 결과 스타일 */
+      .search-result-info {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+      }
+
+      .search-form .form-control:focus {
+        border-color: #ff6b35;
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+      }
+
+      .search-form .btn-primary {
+        background-color: #ff6b35;
+        border-color: #ff6b35;
+      }
+
+      .search-form .btn-primary:hover {
+        background-color: #e55a2b;
+        border-color: #e55a2b;
+      }
     </style>
 
     <!-- Sort functionality -->
@@ -319,6 +439,13 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         const currentUrl = new URL(window.location);
         currentUrl.searchParams.set('sort', sortValue);
         currentUrl.searchParams.set('page', '1'); // 정렬 변경 시 첫 페이지로 이동
+        
+        // 검색어가 있다면 유지
+        const searchKeyword = '<c:out value="${searchKeyword}"/>';
+        if (searchKeyword && searchKeyword.trim() !== '') {
+          currentUrl.searchParams.set('search', searchKeyword);
+        }
+        
         window.location.href = currentUrl.toString();
       }
     </script>

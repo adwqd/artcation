@@ -85,4 +85,14 @@ public class CommunityService {
   public int getTotalCount() {
     return mapper.getTotalCount();
   }
+
+  // 검색과 정렬, 페이지네이션을 지원하는 게시글 목록 조회
+  public List<CommunityPost> searchWithSortAndPagination(String keyword, String sort, int limit, int offset) {
+    return mapper.searchWithSortAndPagination(keyword, sort, limit, offset);
+  }
+
+  // 검색 결과 개수 조회
+  public int getSearchCount(String keyword) {
+    return mapper.getSearchCount(keyword);
+  }
 }

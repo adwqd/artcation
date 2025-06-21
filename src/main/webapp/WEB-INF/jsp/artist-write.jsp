@@ -8,8 +8,8 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>예술인 기록 작성 - 아트케이션 고성</title>
-  <meta name="description" content="예술인 기록 작성 페이지">
-  <meta name="keywords" content="고성, 예술인, 기록, 작성">
+  <meta name="description" content="예술인 기록 작성 - 아트케이션 고성">
+  <meta name="keywords" content="고성, 아트케이션, 예술인, 기록작성">
 
   <!-- Favicons -->
   <link href="<c:url value='/assets/img/favicon.png'/>" rel="icon">
@@ -24,14 +24,12 @@
   <link href="<c:url value='/assets/vendor/bootstrap/css/bootstrap.min.css'/>" rel="stylesheet">
   <link href="<c:url value='/assets/vendor/bootstrap-icons/bootstrap-icons.css'/>" rel="stylesheet">
   <link href="<c:url value='/assets/vendor/aos/aos.css'/>" rel="stylesheet">
-  <link href="<c:url value='/assets/vendor/glightbox/css/glightbox.min.css'/>" rel="stylesheet">
-  <link href="<c:url value='/assets/vendor/swiper/swiper-bundle.min.css'/>" rel="stylesheet">
 
   <!-- Main CSS File -->
   <link href="<c:url value='/assets/css/main.css'/>" rel="stylesheet">
 </head>
 
-<body class="blog-page">
+<body>
 
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
@@ -47,7 +45,7 @@
           <li><a href="<c:url value='/blog'/>" class="active">예술인 기록</a></li>
           <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
           <li><a href="<c:url value='/#promotions'/>">홍보 및 공지</a></li>
-
+          
           <c:choose>
             <c:when test="${not empty sessionScope.loginUser}">
               <li class="dropdown"><a href="#"><span>${sessionScope.displayName}님</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
@@ -76,243 +74,152 @@
         <div class="row">
           <div class="col-lg-12">
             <h1>예술인 기록 작성</h1>
-            <p>새로운 예술 활동과 경험을 공유해주세요</p>
+            <p>새로운 예술 활동과 경험을 공유해보세요</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Write Form Section -->
-    <section class="section">
+    <!-- Write Post Section -->
+    <section class="contact section">
       <div class="container">
+        
+        <!-- Flash Messages -->
+        <c:if test="${not empty message}">
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </c:if>
+        <c:if test="${not empty error}">
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ${error}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </c:if>
+        
         <div class="row justify-content-center">
           <div class="col-lg-8">
             
-            <c:if test="${not empty error}">
-              <div class="alert alert-danger" role="alert">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                ${error}
+            <form action="<c:url value='/artist/write'/>" method="post" enctype="multipart/form-data" class="php-email-form">
+              
+              <!-- 작성자 정보 (읽기 전용) -->
+              <div class="row gy-4 mb-4">
+                <div class="col-md-12">
+                  <label class="form-label">작성자</label>
+                  <input type="text" class="form-control" value="${sessionScope.displayName} (${sessionScope.role == 'admin' ? '관리자' : '예술인'})" readonly>
+                  <small class="form-text text-muted">로그인한 사용자로 자동 설정됩니다.</small>
+                </div>
               </div>
-            </c:if>
 
-            <c:if test="${not empty message}">
-              <div class="alert alert-success" role="alert">
-                <i class="bi bi-check-circle-fill"></i>
-                ${message}
+              <!-- 게시글 정보 -->
+              <div class="row gy-4 mb-4">
+                <div class="col-md-12">
+                  <label for="title" class="form-label">제목 <span class="text-danger">*</span></label>
+                  <input type="text" name="title" id="title" class="form-control" placeholder="예술인 기록의 제목을 입력하세요" required maxlength="200">
+                </div>
               </div>
-            </c:if>
 
-            <div class="card shadow">
-              <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">
-                  <i class="bi bi-pencil-square"></i> 새 기록 작성
-                </h4>
-                <p class="mb-0 mt-2">작성자: ${sessionScope.displayName} (${sessionScope.role == 'admin' ? '관리자' : '예술인'})</p>
+              <div class="row gy-4 mb-4">
+                <div class="col-md-12">
+                  <label for="content" class="form-label">내용 <span class="text-danger">*</span></label>
+                  <textarea class="form-control" name="content" id="content" rows="10" placeholder="예술 활동, 작품 소개, 전시회 후기, 창작 과정 등을 자유롭게 작성해주세요." required></textarea>
+                </div>
               </div>
-              <div class="card-body p-4">
-                
-                <form action="<c:url value='/artist/write'/>" method="post" enctype="multipart/form-data">
-                  <div class="mb-4">
-                    <label for="title" class="form-label">
-                      <i class="bi bi-card-heading"></i> 제목 <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="title" name="title" 
-                           placeholder="예술인 기록의 제목을 입력하세요" required maxlength="200">
-                    <div class="form-text">최대 200자까지 입력 가능합니다.</div>
-                  </div>
+
+              <!-- 이미지 첨부 -->
+              <div class="row gy-4 mb-4">
+                <div class="col-md-12">
+                  <label for="imageFile" class="form-label">이미지 첨부 <span class="text-muted">(선택사항)</span></label>
+                  <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*" onchange="previewImage(this)">
+                  <small class="form-text text-muted">JPG, PNG, GIF, WebP 형식만 가능하며, 최대 10MB까지 업로드할 수 있습니다.</small>
                   
-                  <div class="mb-4">
-                    <label for="content" class="form-label">
-                      <i class="bi bi-card-text"></i> 내용 <span class="text-danger">*</span>
-                    </label>
-                    <textarea class="form-control" id="content" name="content" rows="15" 
-                              placeholder="예술 활동, 작품 소개, 전시회 후기, 창작 과정 등을 자유롭게 작성해주세요.
-
-예시:
-- 최근 완성한 작품에 대한 이야기
-- 전시회나 공연 참여 경험
-- 새로운 기법이나 재료에 대한 실험
-- 다른 예술인들과의 협업 경험
-- 지역 문화 활동 참여 후기
-- 창작 과정에서의 고민과 해결책" required></textarea>
-                    <div class="form-text">
-                      <i class="bi bi-lightbulb"></i> 
-                      다른 예술인들과 지역 주민들에게 도움이 될 수 있는 내용을 포함해주세요.
-                    </div>
-                  </div>
-                  
-                  <div class="mb-4">
-                    <label for="imageFile" class="form-label">
-                      <i class="bi bi-image"></i> 이미지 첨부 <span class="text-muted">(선택사항)</span>
-                    </label>
-                    <input type="file" class="form-control" id="imageFile" name="imageFile" 
-                           accept="image/*" onchange="previewImage(this)">
-                    <div class="form-text">
-                      <i class="bi bi-info-circle"></i> 
-                      JPG, PNG, GIF, WebP 형식만 가능하며, 최대 10MB까지 업로드할 수 있습니다.
-                    </div>
-                    
-                    <!-- 이미지 미리보기 -->
-                    <div id="imagePreview" class="mt-3" style="display: none;">
-                      <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                          <span><i class="bi bi-eye"></i> 미리보기</span>
-                          <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeImage()">
-                            <i class="bi bi-x"></i> 제거
-                          </button>
-                        </div>
-                        <div class="card-body text-center">
-                          <img id="previewImg" src="" alt="미리보기" class="img-fluid" style="max-height: 300px;">
-                        </div>
+                  <!-- 이미지 미리보기 -->
+                  <div id="imagePreview" class="mt-3" style="display: none;">
+                    <div class="card">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-eye"></i> 미리보기</span>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeImage()">
+                          <i class="bi bi-x"></i> 제거
+                        </button>
+                      </div>
+                      <div class="card-body text-center">
+                        <img id="previewImg" src="" alt="미리보기" class="img-fluid" style="max-height: 300px;">
                       </div>
                     </div>
                   </div>
-                  
-                  <div class="d-flex gap-2 justify-content-between">
-                    <a href="<c:url value='/blog'/>" class="btn btn-outline-secondary">
-                      <i class="bi bi-arrow-left"></i> 목록으로
-                    </a>
-                    <div class="d-flex gap-2">
-                      <button type="reset" class="btn btn-outline-warning">
-                        <i class="bi bi-arrow-clockwise"></i> 초기화
-                      </button>
-                      <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-lg"></i> 작성 완료
-                      </button>
-                    </div>
-                  </div>
-                </form>
-
+                </div>
               </div>
-            </div>
 
+              <!-- 버튼 -->
+              <div class="row">
+                <div class="col-md-12 text-center">
+                  <button type="submit" class="btn btn-primary me-2">
+                    <i class="bi bi-pencil"></i> 기록 작성
+                  </button>
+                  <a href="<c:url value='/blog'/>" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> 목록으로
+                  </a>
+                </div>
+              </div>
+
+            </form>
+            
           </div>
         </div>
+
       </div>
     </section>
 
   </main>
 
-  <!-- Footer -->
-  <footer id="footer" class="footer dark-background">
-    <div class="container footer-top">
-      <div class="row gy-4">
-        <div class="col-lg-4 col-md-6 footer-about">
-          <a href="<c:url value='/'/>" class="logo d-flex align-items-center">
-            <span class="sitename">아트케이션 고성</span>
-          </a>
-          <div class="footer-contact pt-3">
-            <p>경상남도 고성군 고성읍 문화로 123</p>
-            <p class="mt-3"><strong>전화:</strong> <span>055-123-4567</span></p>
-            <p><strong>이메일:</strong> <span>artcation.goseong@gmail.com</span></p>
-          </div>
-          <div class="social-links d-flex mt-4">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-youtube"></i></a>
-            <a href=""><i class="bi bi-envelope"></i></a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">아트케이션 고성</strong> <span>All Rights Reserved</span></p>
-    </div>
-  </footer>
-
-  <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-  <!-- Preloader -->
-  <div id="preloader"></div>
-
   <!-- Vendor JS Files -->
   <script src="<c:url value='/assets/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
-  <script src="<c:url value='/assets/vendor/php-email-form/validate.js'/>"></script>
   <script src="<c:url value='/assets/vendor/aos/aos.js'/>"></script>
-  <script src="<c:url value='/assets/vendor/glightbox/js/glightbox.min.js'/>"></script>
-  <script src="<c:url value='/assets/vendor/swiper/swiper-bundle.min.js'/>"></script>
-  <script src="<c:url value='/assets/vendor/imagesloaded/imagesloaded.pkgd.min.js'/>"></script>
-  <script src="<c:url value='/assets/vendor/isotope-layout/isotope.pkgd.min.js'/>"></script>
 
   <!-- Main JS File -->
   <script src="<c:url value='/assets/js/main.js'/>"></script>
 
+  <!-- 이미지 미리보기 JavaScript -->
   <script>
-    // 폼 제출 전 확인
-    document.querySelector('form').addEventListener('submit', function(e) {
-      const title = document.getElementById('title').value.trim();
-      const content = document.getElementById('content').value.trim();
-      
-      if (!title || !content) {
-        e.preventDefault();
-        alert('제목과 내용을 모두 입력해주세요.');
-        return;
-      }
-      
-      if (title.length > 200) {
-        e.preventDefault();
-        alert('제목은 200자 이내로 입력해주세요.');
-        return;
-      }
-      
-      if (content.length < 10) {
-        e.preventDefault();
-        alert('내용을 10자 이상 입력해주세요.');
-        return;
-      }
-      
-      if (!confirm('예술인 기록을 작성하시겠습니까?')) {
-        e.preventDefault();
-      }
-    });
-
-    // 글자 수 카운터
-    document.getElementById('title').addEventListener('input', function() {
-      const current = this.value.length;
-      const max = 200;
-      const counter = this.parentNode.querySelector('.form-text');
-      counter.textContent = `${current}/${max}자 (최대 200자까지 입력 가능합니다.)`;
-      
-      if (current > max) {
-        this.value = this.value.substring(0, max);
-      }
-    });
-
-    // 이미지 미리보기 함수
-    function previewImage(input) {
-      const file = input.files[0];
-      if (file) {
-        // 파일 크기 검사 (10MB)
-        if (file.size > 10 * 1024 * 1024) {
-          alert('파일 크기는 10MB를 초과할 수 없습니다.');
-          input.value = '';
-          return;
-        }
-        
-        // 파일 형식 검사
-        if (!file.type.startsWith('image/')) {
-          alert('이미지 파일만 업로드 가능합니다.');
-          input.value = '';
-          return;
-        }
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById('previewImg').src = e.target.result;
-          document.getElementById('imagePreview').style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      }
-    }
+  function previewImage(input) {
+    const file = input.files[0];
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
     
-    function removeImage() {
-      document.getElementById('imageFile').value = '';
-      document.getElementById('imagePreview').style.display = 'none';
-      document.getElementById('previewImg').src = '';
+    if (file) {
+      // 파일 크기 체크 (10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('파일 크기는 10MB를 초과할 수 없습니다.');
+        input.value = '';
+        preview.style.display = 'none';
+        return;
+      }
+      
+      // 파일 타입 체크
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('JPG, PNG, GIF, WebP 형식의 이미지만 업로드 가능합니다.');
+        input.value = '';
+        preview.style.display = 'none';
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    } else {
+      preview.style.display = 'none';
     }
+  }
+  
+  function removeImage() {
+    document.getElementById('imageFile').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
+  }
   </script>
 
 </body>
