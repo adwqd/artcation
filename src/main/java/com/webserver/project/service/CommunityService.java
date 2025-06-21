@@ -11,9 +11,14 @@ import java.util.List;
 public class CommunityService {
   private final CommunityMapper mapper;
 
-  // 전체 커뮤니티 게시글 목록
+  // 전체 커뮤니티 게시글 목록 (기본: 최신순)
   public List<CommunityPost> list() {
     return mapper.findAll();
+  }
+
+  // 정렬 옵션으로 커뮤니티 게시글 목록 조회
+  public List<CommunityPost> listWithSort(String sort) {
+    return mapper.findAllWithSort(sort);
   }
 
   // 특정 회원의 게시글 목록
@@ -69,5 +74,15 @@ public class CommunityService {
       return false; // 존재하지 않거나 회원 게시글
     }
     return post.getGuestPw() != null && post.getGuestPw().equals(inputPassword);
+  }
+
+  // 페이지네이션과 정렬을 지원하는 게시글 목록 조회
+  public List<CommunityPost> listWithSortAndPagination(String sort, int limit, int offset) {
+    return mapper.findAllWithSortAndPagination(sort, limit, offset);
+  }
+
+  // 전체 게시글 개수 조회
+  public int getTotalCount() {
+    return mapper.getTotalCount();
   }
 }

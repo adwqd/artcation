@@ -58,14 +58,6 @@
           <li><a href="<c:url value='/blog'/>">예술인 기록</a></li>
           <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
           <li><a href="#promotions">홍보 및 공지</a></li>
-          <li class="dropdown"><a href="#"><span>더보기</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="<c:url value='/artist'/>">예술인 관리</a></li>
-              <li><a href="<c:url value='/starter'/>">공지사항</a></li>
-              <li><a href="#team">운영진 소개</a></li>
-            </ul>
-          </li>
-          <li><a href="#contact">문의하기</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>

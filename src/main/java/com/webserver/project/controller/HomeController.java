@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,7 +45,9 @@ public class HomeController {
     }
 
     @GetMapping("/blog")
-    public String blog(Model model, HttpSession session) {
+    public String blog(@RequestParam(defaultValue = "latest") String sort, 
+                      @RequestParam(defaultValue = "1") int page,
+                      Model model, HttpSession session) {
         // 세션 정보 로깅
         log.info("=== Blog 페이지 접근 ===");
         log.info("Session ID: {}", session.getId());
@@ -52,16 +55,30 @@ public class HomeController {
         log.info("Username: {}", session.getAttribute("username"));
         log.info("Display Name: {}", session.getAttribute("displayName"));
         log.info("Role: {}", session.getAttribute("role"));
+        log.info("정렬 옵션: {}, 페이지: {}", sort, page);
         
-        // 예술인 기록 목록 (블로그 역할)
-        model.addAttribute("blogPosts", artistPostMapper.findAll());
+        // 페이지네이션 설정
+        int pageSize = 6; // 한 페이지당 6개
+        int offset = (page - 1) * pageSize;
+        
+        // 전체 게시글 수와 페이지 정보 계산
+        int totalPosts = artistPostMapper.getTotalCount();
+        int totalPages = (int) Math.ceil((double) totalPosts / pageSize);
+        
+        // 예술인 기록 목록 (블로그 역할) - 정렬과 페이지네이션 적용
+        model.addAttribute("blogPosts", artistPostMapper.findAllWithSortAndPagination(sort, pageSize, offset));
+        model.addAttribute("currentSort", sort);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalPosts", totalPosts);
+        
         return "blog";
     }
 
 
 
     @GetMapping("/blog/{id}")
-    public String blogDetails(@PathVariable Integer id, Model model) {
+    public String blogDetails(@PathVariable Integer id, Model model, HttpSession session) {
         // 예술인 기록 상세 보기
         ArtistPost post = artistPostMapper.findById(id);
         if (post != null) {
@@ -72,6 +89,10 @@ public class HomeController {
             var comments = commentMapper.findByArtistPost(id);
             model.addAttribute("comments", comments);
             model.addAttribute("commentCount", comments != null ? comments.size() : 0);
+            
+            // 해당 예술가의 최근 작품 목록 (현재 글 제외)
+            var recentPostsByArtist = artistPostMapper.findRecentPostsByArtistExcludingCurrent(post.getArtistId(), id, 5);
+            model.addAttribute("recentPosts", recentPostsByArtist);
         }
         return "blog-details";
     }

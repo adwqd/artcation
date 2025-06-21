@@ -1,28 +1,68 @@
 package com.webserver.project.controller;
 
+import com.webserver.project.model.Comment;
 import com.webserver.project.model.CommunityPost;
+import com.webserver.project.service.CommentService;
 import com.webserver.project.service.CommunityService;
+
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/community")
+@Slf4j
 public class CommunityController {
   private final CommunityService svc;
+  private final CommentService commentService;
 
   @GetMapping
-  public String list(Model m) {
-    m.addAttribute("posts", svc.list());
+  public String list(@RequestParam(defaultValue = "latest") String sort, 
+                    @RequestParam(defaultValue = "1") int page,
+                    Model m) {
+    
+    // 페이지네이션 설정
+    int pageSize = 10; // 한 페이지당 10개
+    int offset = (page - 1) * pageSize;
+    
+    // 전체 게시글 수와 페이지 정보 계산
+    int totalPosts = svc.getTotalCount();
+    int totalPages = (int) Math.ceil((double) totalPosts / pageSize);
+    
+    // 커뮤니티 게시글 목록 - 정렬과 페이지네이션 적용
+    m.addAttribute("posts", svc.listWithSortAndPagination(sort, pageSize, offset));
+    m.addAttribute("currentSort", sort);
+    m.addAttribute("currentPage", page);
+    m.addAttribute("totalPages", totalPages);
+    m.addAttribute("totalPosts", totalPosts);
+    
     return "community";
   }
 
   @GetMapping("/view/{id}")
   public String view(@PathVariable int id, Model m) {
-    m.addAttribute("post", svc.get(id));
+    // 게시글 조회
+    CommunityPost post = svc.get(id);
+    m.addAttribute("post", post);
+    
+    // 댓글 조회
+    List<Comment> comments = commentService.getCommentsByPost(id, "community");
+    m.addAttribute("comments", comments);
+    m.addAttribute("commentCount", comments.size());
+    
+    log.info("커뮤니티 게시글 {} 조회 - 댓글 {}개", id, comments.size());
+    
     return "community-detail";
   }
 
@@ -109,5 +149,150 @@ public class CommunityController {
       redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
       return "redirect:/community/view/" + id;
     }
+  }
+
+  // ========== 댓글 관련 기능 ==========
+  
+  @PostMapping("/view/{postId}/comments")
+  public String addComment(@PathVariable int postId,
+                          @RequestParam String content,
+                          @RequestParam(required = false) String guestName,
+                          @RequestParam(required = false) String guestPw,
+                          HttpSession session,
+                          RedirectAttributes redirectAttributes) {
+    try {
+      Comment comment = new Comment();
+      comment.setPostType("community");
+      comment.setPostId(postId);
+      comment.setContent(content);
+      
+      // 로그인 사용자 확인
+      Integer userId = (Integer) session.getAttribute("userId");
+      if (userId != null) {
+        // 로그인 사용자
+        comment.setAuthorId(userId);
+        log.info("로그인 사용자 {}가 커뮤니티 게시글 {}에 댓글 작성", userId, postId);
+      } else {
+        // 게스트 사용자
+        if (guestName == null || guestName.trim().isEmpty()) {
+          redirectAttributes.addFlashAttribute("commentError", "이름을 입력해주세요.");
+          return "redirect:/community/view/" + postId;
+        }
+        if (guestPw == null || guestPw.trim().isEmpty()) {
+          redirectAttributes.addFlashAttribute("commentError", "비밀번호를 입력해주세요.");
+          return "redirect:/community/view/" + postId;
+        }
+        comment.setGuestName(guestName.trim());
+        comment.setGuestPw(guestPw);
+        log.info("게스트 사용자 {}가 커뮤니티 게시글 {}에 댓글 작성", guestName, postId);
+      }
+      
+      commentService.addComment(comment);
+      redirectAttributes.addFlashAttribute("commentSuccess", "댓글이 성공적으로 등록되었습니다.");
+      
+    } catch (Exception e) {
+      log.error("댓글 등록 실패: ", e);
+      redirectAttributes.addFlashAttribute("commentError", "댓글 등록에 실패했습니다: " + e.getMessage());
+    }
+    
+    return "redirect:/community/view/" + postId;
+  }
+
+  @PostMapping("/comments/{commentId}/edit")
+  @ResponseBody
+  public ResponseEntity<Map<String, Object>> editComment(@PathVariable int commentId,
+                                                        @RequestParam String content,
+                                                        @RequestParam(required = false) String guestPw,
+                                                        HttpSession session) {
+    Map<String, Object> response = new HashMap<>();
+    
+    try {
+      Comment comment = commentService.getCommentById(commentId);
+      if (comment == null) {
+        response.put("success", false);
+        response.put("message", "댓글을 찾을 수 없습니다.");
+        return ResponseEntity.ok(response);
+      }
+      
+      // 권한 확인
+      Integer userId = (Integer) session.getAttribute("userId");
+      String role = (String) session.getAttribute("role");
+      
+      boolean canEdit = false;
+      if ("admin".equals(role)) {
+        canEdit = true;
+      } else if (comment.getAuthorId() != null && userId != null && comment.getAuthorId().equals(userId)) {
+        canEdit = true;
+      } else if (comment.getAuthorId() == null && guestPw != null && guestPw.equals(comment.getGuestPw())) {
+        canEdit = true;
+      }
+      
+      if (!canEdit) {
+        response.put("success", false);
+        response.put("message", "댓글 수정 권한이 없습니다.");
+        return ResponseEntity.ok(response);
+      }
+      
+      comment.setContent(content);
+      commentService.updateComment(comment);
+      
+      response.put("success", true);
+      response.put("message", "댓글이 수정되었습니다.");
+      
+    } catch (Exception e) {
+      log.error("댓글 수정 실패: ", e);
+      response.put("success", false);
+      response.put("message", "댓글 수정에 실패했습니다.");
+    }
+    
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/comments/{commentId}/delete")
+  @ResponseBody
+  public ResponseEntity<Map<String, Object>> deleteComment(@PathVariable int commentId,
+                                                          @RequestParam(required = false) String guestPw,
+                                                          HttpSession session) {
+    Map<String, Object> response = new HashMap<>();
+    
+    try {
+      Comment comment = commentService.getCommentById(commentId);
+      if (comment == null) {
+        response.put("success", false);
+        response.put("message", "댓글을 찾을 수 없습니다.");
+        return ResponseEntity.ok(response);
+      }
+      
+      // 권한 확인
+      Integer userId = (Integer) session.getAttribute("userId");
+      String role = (String) session.getAttribute("role");
+      
+      boolean canDelete = false;
+      if ("admin".equals(role)) {
+        canDelete = true;
+      } else if (comment.getAuthorId() != null && userId != null && comment.getAuthorId().equals(userId)) {
+        canDelete = true;
+      } else if (comment.getAuthorId() == null && guestPw != null && guestPw.equals(comment.getGuestPw())) {
+        canDelete = true;
+      }
+      
+      if (!canDelete) {
+        response.put("success", false);
+        response.put("message", "댓글 삭제 권한이 없습니다.");
+        return ResponseEntity.ok(response);
+      }
+      
+      commentService.deleteComment(commentId);
+      
+      response.put("success", true);
+      response.put("message", "댓글이 삭제되었습니다.");
+      
+    } catch (Exception e) {
+      log.error("댓글 삭제 실패: ", e);
+      response.put("success", false);
+      response.put("message", "댓글 삭제에 실패했습니다.");
+    }
+    
+    return ResponseEntity.ok(response);
   }
 }

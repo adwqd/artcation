@@ -207,19 +207,15 @@
                   <div class="row">
                     <div class="col-md-4">
                       <i class="bi bi-calendar3 text-primary"></i>
-                      <strong>작성일:</strong><br>
-                      <time datetime="${post.createdAt}">${post.createdAt.year}년 ${post.createdAt.monthValue}월 ${post.createdAt.dayOfMonth}일</time>
+                      <strong>작성일:</strong>
+                      <time datetime="${post.createdAt}">${post.createdAt.year}/${post.createdAt.monthValue}/${post.createdAt.dayOfMonth}</time>
                     </div>
                     <div class="col-md-4">
                       <i class="bi bi-chat-dots text-success"></i>
-                      <strong>댓글:</strong><br>
-                      <span><c:out value="${commentCount}" default="0"/>개</span>
+                      <strong>댓글:</strong>
+                      <span><c:out value="${commentCount}" default="0"/></span>
                     </div>
-                    <div class="col-md-4">
-                      <i class="bi bi-tag text-warning"></i>
-                      <strong>분류:</strong><br>
-                      <span>예술 작품</span>
-                    </div>
+
                   </div>
                 </div>
 
@@ -227,7 +223,7 @@
                 <div class="content">
                   <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
-                      <h5 class="card-title"><i class="bi bi-brush"></i> 작품 소개</h5>
+                      <h5 class="card-title"> </h5>
                       <div class="content-text">
                         <c:choose>
                           <c:when test="${not empty post.content}">
@@ -242,16 +238,7 @@
                   </div>
                 </div>
 
-                <!-- 태그 -->
-                <div class="meta-bottom mt-4">
-                  <div class="d-flex flex-wrap align-items-center">
-                    <i class="bi bi-tags text-primary me-2"></i>
-                    <span class="badge bg-primary me-2">예술</span>
-                    <span class="badge bg-secondary me-2">창작</span>
-                    <span class="badge bg-success me-2">고성</span>
-                    <span class="badge bg-info">작품</span>
-                  </div>
-                </div>
+
 
               </article>
 
@@ -428,15 +415,6 @@
                     <button type="submit" class="btn btn-primary btn-lg px-5">
                       <i class="bi bi-send"></i> 댓글 등록
                     </button>
-                    <c:if test="${empty sessionScope.loginUser}">
-                      <div class="mt-3">
-                        <small class="text-muted">
-                          <i class="bi bi-shield-check"></i>
-                          예술인으로 로그인하면 더 편리하게 댓글을 관리할 수 있습니다.
-                          <a href="<c:url value='/login'/>" class="text-decoration-none">로그인하기</a>
-                        </small>
-                      </div>
-                    </c:if>
                   </div>
                 </form>
               </div>
@@ -477,7 +455,7 @@
             <!-- 검색 위젯 -->
             <div class="sidebar-widget-korean">
               <h5 class="widget-title mb-3">
-                <i class="bi bi-search text-primary"></i> 작품 검색
+                <i class="bi bi-search text-primary">검색</i>
               </h5>
               <form action="<c:url value='/blog'/>" method="get" class="d-flex">
                 <input type="text" name="search" class="form-control me-2" placeholder="작품명, 예술인명..." value="<c:out value='${param.search}'/>">
@@ -487,43 +465,12 @@
               </form>
             </div>
 
-            <!-- 카테고리 위젯 -->
-            <div class="sidebar-widget-korean">
-              <h5 class="widget-title mb-3">
-                <i class="bi bi-grid text-primary"></i> 분류
-              </h5>
-              <ul class="list-unstyled">
-                <li class="mb-2">
-                  <a href="<c:url value='/blog?category=painting'/>" class="text-decoration-none d-flex justify-content-between">
-                    <span><i class="bi bi-brush me-2"></i>회화</span>
-                    <span class="badge bg-light text-dark">12</span>
-                  </a>
-                </li>
-                <li class="mb-2">
-                  <a href="<c:url value='/blog?category=sculpture'/>" class="text-decoration-none d-flex justify-content-between">
-                    <span><i class="bi bi-box me-2"></i>조각</span>
-                    <span class="badge bg-light text-dark">8</span>
-                  </a>
-                </li>
-                <li class="mb-2">
-                  <a href="<c:url value='/blog?category=craft'/>" class="text-decoration-none d-flex justify-content-between">
-                    <span><i class="bi bi-scissors me-2"></i>공예</span>
-                    <span class="badge bg-light text-dark">15</span>
-                  </a>
-                </li>
-                <li class="mb-2">
-                  <a href="<c:url value='/blog?category=design'/>" class="text-decoration-none d-flex justify-content-between">
-                    <span><i class="bi bi-palette2 me-2"></i>디자인</span>
-                    <span class="badge bg-light text-dark">6</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
+
 
             <!-- 최근 작품 위젯 -->
             <div class="sidebar-widget-korean">
               <h5 class="widget-title mb-3">
-                <i class="bi bi-clock-history text-primary"></i> 최근 작품
+                <i class="bi bi-clock-history text-primary"></i> <c:out value="${post.displayName}"/>님의 다른 글
               </h5>
               
               <c:choose>
@@ -547,27 +494,13 @@
                 <c:otherwise>
                   <p class="text-muted text-center py-3">
                     <i class="bi bi-image" style="font-size: 2rem; opacity: 0.3;"></i><br>
-                    최근 작품이 없습니다.
+                    <c:out value="${post.displayName}"/>님의 다른 작품이 없습니다.
                   </p>
                 </c:otherwise>
               </c:choose>
             </div>
 
-            <!-- 태그 위젯 -->
-            <div class="sidebar-widget-korean">
-              <h5 class="widget-title mb-3">
-                <i class="bi bi-tags text-primary"></i> 인기 태그
-              </h5>
-              <div class="d-flex flex-wrap gap-2">
-                <a href="<c:url value='/blog?tag=예술'/>" class="badge bg-primary text-decoration-none">예술</a>
-                <a href="<c:url value='/blog?tag=창작'/>" class="badge bg-secondary text-decoration-none">창작</a>
-                <a href="<c:url value='/blog?tag=고성'/>" class="badge bg-success text-decoration-none">고성</a>
-                <a href="<c:url value='/blog?tag=전시'/>" class="badge bg-warning text-decoration-none">전시</a>
-                <a href="<c:url value='/blog?tag=작품'/>" class="badge bg-info text-decoration-none">작품</a>
-                <a href="<c:url value='/blog?tag=문화'/>" class="badge bg-light text-dark text-decoration-none">문화</a>
-                <a href="<c:url value='/blog?tag=지역'/>" class="badge bg-dark text-decoration-none">지역</a>
-              </div>
-            </div>
+
 
           </div>
         </div>

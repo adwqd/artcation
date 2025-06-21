@@ -1,15 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="ko">
 
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>${post.title} - 아트케이션 고성</title>
-  <meta name="description" content="커뮤니티 글 상세보기 - 아트케이션 고성">
-  <meta name="keywords" content="고성, 아트케이션, 커뮤니티">
+  <title><c:out value="${post.title}" default="커뮤니티 글"/> - 고성 예술인 플랫폼</title>
+  <meta name="description" content="고성 지역 예술인들과 시민들이 소통하고 공유하는 커뮤니티">
+  <meta name="keywords" content="고성, 커뮤니티, 소통, 공유">
 
   <!-- Favicons -->
   <link href="<c:url value='/assets/img/favicon.png'/>" rel="icon">
@@ -24,18 +25,55 @@
   <link href="<c:url value='/assets/vendor/bootstrap/css/bootstrap.min.css'/>" rel="stylesheet">
   <link href="<c:url value='/assets/vendor/bootstrap-icons/bootstrap-icons.css'/>" rel="stylesheet">
   <link href="<c:url value='/assets/vendor/aos/aos.css'/>" rel="stylesheet">
+  <link href="<c:url value='/assets/vendor/animate.css/animate.min.css'/>" rel="stylesheet">
+  <link href="<c:url value='/assets/vendor/glightbox/css/glightbox.min.css'/>" rel="stylesheet">
+  <link href="<c:url value='/assets/vendor/swiper/swiper-bundle.min.css'/>" rel="stylesheet">
 
   <!-- Main CSS File -->
   <link href="<c:url value='/assets/css/main.css'/>" rel="stylesheet">
+  
+  <style>
+    .community-info {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+    }
+    
+    .post-meta-enhanced {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+    
+    .comment-form-korean {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar-widget-korean {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+    }
+  </style>
 </head>
 
-<body>
+<body class="community-details-page">
 
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
       <a href="<c:url value='/'/>" class="logo d-flex align-items-center">
-        <h1 class="sitename">아트케이션 고성</h1>
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="<c:url value='/assets/img/logo.png'/>" alt=""> -->
+        <h1 class="sitename">Artcation Goseong</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
@@ -45,7 +83,19 @@
           <li><a href="<c:url value='/blog'/>">예술인 기록</a></li>
           <li><a href="<c:url value='/community'/>" class="active">커뮤니티</a></li>
           <li><a href="<c:url value='/#promotions'/>">홍보 및 공지</a></li>
-          <li><a href="<c:url value='/#contact'/>">문의하기</a></li>
+          <c:choose>
+            <c:when test="${not empty sessionScope.loginUser}">
+              <li class="dropdown"><a href="#"><span>${sessionScope.displayName}님</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                <ul>
+                  <li><a href="<c:url value='/artist/write'/>">기록 작성</a></li>
+                  <li><a href="<c:url value='/logout'/>">로그아웃</a></li>
+                </ul>
+              </li>
+            </c:when>
+            <c:otherwise>
+              <li><a href="<c:url value='/login'/>">로그인</a></li>
+            </c:otherwise>
+          </c:choose>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -56,142 +106,426 @@
   <main class="main">
 
     <!-- Page Title -->
-    <div class="page-title">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12">
-            <h1>커뮤니티</h1>
-            <p>소통과 공유의 공간</p>
-          </div>
-        </div>
+    <div class="page-title dark-background">
+      <div class="container position-relative">
+        <h1>커뮤니티 상세보기</h1>
+        <p>고성 지역 예술인들과 시민들이 소통하고 공유하는 공간</p>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="<c:url value='/'/>">홈</a></li>
+            <li><a href="<c:url value='/community'/>">커뮤니티</a></li>
+            <li class="current"><c:out value="${post.title}" default="상세보기"/></li>
+          </ol>
+        </nav>
       </div>
-    </div>
+    </div><!-- End Page Title -->
 
-         <!-- Post Detail Section -->
-     <section class="blog-details section">
-       <div class="container">
-         
-         <!-- Flash Messages -->
-         <c:if test="${not empty message}">
-           <div class="alert alert-success alert-dismissible fade show" role="alert">
-             ${message}
-             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-           </div>
-         </c:if>
-         <c:if test="${not empty error}">
-           <div class="alert alert-danger alert-dismissible fade show" role="alert">
-             ${error}
-             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-           </div>
-         </c:if>
-         
-         <div class="row">
-          <div class="col-lg-8 offset-lg-2">
-            
-            <!-- Post Header -->
-            <div class="post-header mb-4">
-              <h2 class="post-title">${post.title}</h2>
-              <div class="post-meta">
-                <span class="author"><i class="bi bi-person"></i> ${post.authorName}</span>
-                <span class="date"><i class="bi bi-calendar"></i> 
-                  ${post.createdAt}
-                </span>
-                <span class="views"><i class="bi bi-eye"></i> ${post.viewCount}회</span>
+    <div class="container">
+      <div class="row">
+
+        <div class="col-lg-8">
+
+          <!-- Community Details Section -->
+          <section id="community-details" class="blog-details section">
+            <div class="container">
+
+              <article class="article">
+
+                <!-- 제목과 작업 도구 -->
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                  <h2 class="title mb-0"><c:out value="${post.title}" default="제목 없음"/></h2>
+                  
+                  <!-- 수정/삭제 버튼 (작성자 또는 관리자만 표시) -->
+                  <c:if test="${not empty sessionScope.loginUser && (sessionScope.userId == post.authorId || sessionScope.role == 'admin')}">
+                    <div class="btn-group" role="group">
+                      <a href="<c:url value='/community/edit-form/${post.postId}'/>" class="btn btn-outline-warning btn-sm">
+                        <i class="bi bi-pencil"></i> 수정
+                      </a>
+                      <form action="<c:url value='/community/delete/${post.postId}'/>" method="post" style="display: inline;" 
+                            onsubmit="return confirm('정말로 이 글을 삭제하시겠습니까?');">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                          <i class="bi bi-trash"></i> 삭제
+                        </button>
+                      </form>
+                    </div>
+                  </c:if>
+                </div>
+
+                <!-- 작성자 정보 -->
+                <div class="community-info">
+                  <div class="row align-items-center">
+                    <div class="col-md-6">
+                      <h4><i class="bi bi-chat-dots"></i> 작성자: <c:out value="${post.authorName}" default="익명"/></h4>
+                      <p class="mb-0">고성 지역 커뮤니티 참여자입니다.</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                      <div class="author-stats">
+                        <small><i class="bi bi-eye"></i> 조회 ${post.viewCount}회</small>
+                      </div>
+                    </div>
+                    <div class="col-md-3 text-end">
+                      <a href="<c:url value='/community'/>" class="btn btn-light">
+                        <i class="bi bi-arrow-left"></i> 목록으로
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 게시글 메타 정보 -->
+                <div class="post-meta-enhanced">
+                  <div class="row text-center">
+                    <div class="col-md-6">
+                      <i class="bi bi-calendar3 text-primary"></i>
+                      <strong>작성일:</strong>
+                      <time datetime="${post.createdAt}">${post.createdAt.year}/${post.createdAt.monthValue}/${post.createdAt.dayOfMonth}</time>
+                    </div>
+                    <div class="col-md-6">
+                      <i class="bi bi-chat-dots text-success"></i>
+                      <strong>댓글:</strong>
+                      <span><c:out value="${commentCount}" default="0"/>개</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 글 내용 -->
+                <div class="content">
+                  <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                      <h5 class="card-title"><i class="bi bi-chat-text"></i></h5>
+                      <div class="content-text">
+                        <c:choose>
+                          <c:when test="${not empty post.content}">
+                            <p style="white-space: pre-wrap; line-height: 1.8;"><c:out value="${post.content}"/></p>
+                          </c:when>
+                          <c:otherwise>
+                            <p class="text-muted">내용이 없습니다.</p>
+                          </c:otherwise>
+                        </c:choose>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </article>
+
+            </div>
+          </section><!-- /Community Details Section -->
+
+          <!-- Community Comments Section -->
+          <section id="community-comments" class="blog-comments section">
+            <div class="container">
+              <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                  <h4 class="comments-count mb-4">
+                    <i class="bi bi-chat-square-text text-primary"></i> 
+                    댓글 <c:out value="${commentCount}" default="0"/>개
+                  </h4>
+
+                  <c:choose>
+                    <c:when test="${not empty comments}">
+                      <c:forEach var="comment" items="${comments}">
+                        <div id="comment-${comment.commentId}" class="comment border-bottom pb-3 mb-3">
+                          <div class="d-flex">
+                            <div class="comment-avatar me-3">
+                              <c:choose>
+                                <c:when test="${comment.authorId != null}">
+                                  <!-- 로그인 사용자 -->
+                                  <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-person-check-fill text-white"></i>
+                                  </div>
+                                </c:when>
+                                <c:otherwise>
+                                  <!-- 게스트 사용자 -->
+                                  <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-person-fill text-white"></i>
+                                  </div>
+                                </c:otherwise>
+                              </c:choose>
+                            </div>
+                            <div class="flex-grow-1">
+                              <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                  <h6 class="mb-0">
+                                    <c:out value="${comment.authorName}"/>
+                                    <c:if test="${comment.authorId != null}">
+                                      <span class="badge bg-success ms-2">회원</span>
+                                    </c:if>
+                                  </h6>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                  <small class="text-muted me-3">
+                                    <c:choose>
+                                      <c:when test="${comment.createdAt != null}">
+                                        ${comment.createdAt.year}년 ${comment.createdAt.monthValue}월 ${comment.createdAt.dayOfMonth}일 
+                                        ${comment.createdAt.hour}:${comment.createdAt.minute < 10 ? '0' : ''}${comment.createdAt.minute}
+                                      </c:when>
+                                      <c:otherwise>
+                                        방금 전
+                                      </c:otherwise>
+                                    </c:choose>
+                                  </small>
+                                  
+                                  <!-- 수정/삭제 버튼 -->
+                                  <c:set var="canModify" value="false"/>
+                                  <c:choose>
+                                    <c:when test="${sessionScope.role == 'admin'}">
+                                      <c:set var="canModify" value="true"/>
+                                    </c:when>
+                                    <c:when test="${comment.authorId != null && sessionScope.userId == comment.authorId}">
+                                      <c:set var="canModify" value="true"/>
+                                    </c:when>
+                                  </c:choose>
+                                  
+                                  <c:if test="${canModify || comment.authorId == null}">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                      <button type="button" class="btn btn-outline-warning btn-sm edit-comment-btn" 
+                                              data-comment-id="${comment.commentId}" 
+                                              data-comment-content="<c:out value='${comment.content}'/>"
+                                              data-is-guest="${comment.authorId == null}">
+                                        <i class="bi bi-pencil"></i>
+                                      </button>
+                                      <button type="button" class="btn btn-outline-danger btn-sm delete-comment-btn" 
+                                              data-comment-id="${comment.commentId}"
+                                              data-is-guest="${comment.authorId == null}">
+                                        <i class="bi bi-trash"></i>
+                                      </button>
+                                    </div>
+                                  </c:if>
+                                </div>
+                              </div>
+                              <p class="mb-0" style="line-height: 1.6;"><c:out value="${comment.content}"/></p>
+                            </div>
+                          </div>
+                        </div>
+                      </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                      <div class="text-center text-muted py-5">
+                        <i class="bi bi-chat-square-dots" style="font-size: 3rem; opacity: 0.3;"></i>
+                        <p class="mt-3">아직 댓글이 없습니다.<br>첫 번째 댓글을 남겨보세요!</p>
+                      </div>
+                    </c:otherwise>
+                  </c:choose>
+                </div>
               </div>
             </div>
+          </section><!-- /Community Comments Section -->
 
-            <!-- Post Content -->
-            <div class="post-content mb-5">
-              <div class="content-body">
-                ${post.content}
+          <!-- Comment Form Section -->
+          <section id="comment-form" class="comment-form section">
+            <div class="container">
+              <div class="comment-form-korean">
+                <!-- 플래시 메시지 표시 -->
+                <c:if test="${not empty commentError}">
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i> ${commentError}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>
+                </c:if>
+                <c:if test="${not empty commentSuccess}">
+                  <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill"></i> ${commentSuccess}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>
+                </c:if>
+
+                <form action="<c:url value='/community/view/${post.postId}/comments'/>" method="post">
+                  <h4 class="mb-4">
+                    <i class="bi bi-pencil-square text-primary"></i> 댓글 작성
+                  </h4>
+                  
+                  <c:choose>
+                    <c:when test="${not empty sessionScope.loginUser}">
+                      <!-- 로그인된 사용자 -->
+                      <div class="alert alert-info mb-4">
+                        <i class="bi bi-person-check-fill"></i>
+                        <strong>${sessionScope.displayName}님</strong>으로 댓글을 작성합니다.
+                      </div>
+                      
+                      <div class="row">
+                        <div class="col form-group mb-4">
+                          <label for="content" class="form-label">댓글 내용 *</label>
+                          <textarea name="content" class="form-control" id="content" rows="5" placeholder="댓글을 입력해주세요..." required></textarea>
+                        </div>
+                      </div>
+                    </c:when>
+                    <c:otherwise>
+                      <!-- 비로그인 사용자 -->
+                      <p class="text-muted mb-4">
+                        <i class="bi bi-info-circle"></i>
+                        비회원으로 댓글을 작성합니다. 수정/삭제 시 비밀번호가 필요합니다.
+                      </p>
+                      
+                      <div class="row">
+                        <div class="col-md-6 form-group mb-3">
+                          <label for="guestName" class="form-label">이름 *</label>
+                          <input name="guestName" type="text" class="form-control" id="guestName" placeholder="이름을 입력해주세요" required>
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
+                          <label for="guestPw" class="form-label">비밀번호 *</label>
+                          <input name="guestPw" type="password" class="form-control" id="guestPw" placeholder="비밀번호를 입력해주세요" required>
+                        </div>
+                      </div>
+                      
+                      <div class="row">
+                        <div class="col form-group mb-4">
+                          <label for="content" class="form-label">댓글 내용 *</label>
+                          <textarea name="content" class="form-control" id="content" rows="5" placeholder="댓글을 입력해주세요..." required></textarea>
+                        </div>
+                      </div>
+                    </c:otherwise>
+                  </c:choose>
+                  
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                      <i class="bi bi-send"></i> 댓글 등록
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
+          </section><!-- /Comment Form Section -->
 
-            <!-- Action Buttons -->
-            <div class="post-actions mb-4">
-              <div class="d-flex justify-content-between">
-                <a href="<c:url value='/community'/>" class="btn btn-secondary">
-                  <i class="bi bi-arrow-left"></i> 목록으로
-                </a>
-                <div>
-                  <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editModal">
-                    <i class="bi bi-pencil"></i> 수정
-                  </button>
-                  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                    <i class="bi bi-trash"></i> 삭제
-                  </button>
+        </div>
+
+        <!-- 사이드바 -->
+        <div class="col-lg-4 sidebar">
+          <div class="widgets-container">
+
+            <!-- 작성자 정보 위젯 -->
+            <div class="sidebar-widget-korean">
+              <div class="d-flex flex-column align-items-center text-center">
+                <div class="bg-gradient-success rounded-circle d-flex align-items-center justify-content-center mb-3" 
+                     style="width: 80px; height: 80px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                  <i class="bi bi-person-fill text-white" style="font-size: 2rem;"></i>
+                </div>
+                <h5><c:out value="${post.authorName}" default="익명"/></h5>
+                <p class="text-muted small mb-3">커뮤니티 참여자</p>
+                
+                <div class="row text-center w-100">
+                  <div class="col-6">
+                    <div class="border-end">
+                      <strong class="d-block">${post.viewCount}</strong>
+                      <small class="text-muted">조회수</small>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <strong class="d-block">${commentCount}</strong>
+                    <small class="text-muted">댓글수</small>
+                  </div>
                 </div>
               </div>
             </div>
 
+            <!-- 검색 위젯 -->
+            <div class="sidebar-widget-korean">
+              <h5 class="widget-title mb-3">
+                <i class="bi bi-search text-primary"></i> 커뮤니티 검색
+              </h5>
+              <form action="<c:url value='/community'/>" method="get" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" placeholder="제목, 작성자..." value="<c:out value='${param.search}'/>">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-search"></i>
+                </button>
+              </form>
+            </div>
+
           </div>
         </div>
 
       </div>
-    </section>
+    </div>
 
   </main>
-
-  <!-- Edit Modal -->
-  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editModalLabel">글 수정을 위한 비밀번호 확인</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="<c:url value='/community/edit/${post.postId}'/>" method="post">
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="editPassword" class="form-label">비밀번호</label>
-              <input type="password" class="form-control" id="editPassword" name="password" required>
-              <small class="form-text text-muted">글 작성시 입력한 비밀번호를 입력해주세요.</small>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-            <button type="submit" class="btn btn-warning">수정하기</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Delete Modal -->
-  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="deleteModalLabel">글 삭제를 위한 비밀번호 확인</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="<c:url value='/community/delete/${post.postId}'/>" method="post">
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="deletePassword" class="form-label">비밀번호</label>
-              <input type="password" class="form-control" id="deletePassword" name="password" required>
-              <small class="form-text text-muted">글 작성시 입력한 비밀번호를 입력해주세요.</small>
-            </div>
-            <div class="alert alert-danger" role="alert">
-              <strong>주의:</strong> 삭제된 글은 복구할 수 없습니다.
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-            <button type="submit" class="btn btn-danger">삭제하기</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 
   <!-- Vendor JS Files -->
   <script src="<c:url value='/assets/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
   <script src="<c:url value='/assets/vendor/aos/aos.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/glightbox/js/glightbox.min.js'/>"></script>
+  <script src="<c:url value='/assets/vendor/swiper/swiper-bundle.min.js'/>"></script>
 
   <!-- Main JS File -->
   <script src="<c:url value='/assets/js/main.js'/>"></script>
 
-</body>
+  <!-- 댓글 관리 JavaScript -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 댓글 수정 버튼 이벤트
+    document.querySelectorAll('.edit-comment-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const commentId = this.dataset.commentId;
+        const content = this.dataset.commentContent;
+        const isGuest = this.dataset.isGuest === 'true';
+        
+        editComment(commentId, content, isGuest);
+      });
+    });
+    
+    // 댓글 삭제 버튼 이벤트
+    document.querySelectorAll('.delete-comment-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const commentId = this.dataset.commentId;
+        const isGuest = this.dataset.isGuest === 'true';
+        
+        deleteComment(commentId, isGuest);
+      });
+    });
+  });
 
+  function editComment(commentId, content, isGuest) {
+    const newContent = prompt('댓글 내용을 수정하세요:', content);
+    if (newContent === null || newContent.trim() === '') return;
+    
+    let form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<c:url value="/comment/edit/"/>' + commentId;
+    
+    // 내용 필드
+    let contentInput = document.createElement('input');
+    contentInput.type = 'hidden';
+    contentInput.name = 'content';
+    contentInput.value = newContent.trim();
+    form.appendChild(contentInput);
+    
+    // 게스트인 경우 비밀번호 확인
+    if (isGuest) {
+      const password = prompt('수정을 위해 비밀번호를 입력하세요:');
+      if (password === null || password.trim() === '') return;
+      
+      let pwInput = document.createElement('input');
+      pwInput.type = 'hidden';
+      pwInput.name = 'guestPw';
+      pwInput.value = password.trim();
+      form.appendChild(pwInput);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  function deleteComment(commentId, isGuest) {
+    if (!confirm('댓글을 삭제하시겠습니까?')) return;
+    
+    let form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<c:url value="/comment/delete/"/>' + commentId;
+    
+    // 게스트인 경우 비밀번호 확인
+    if (isGuest) {
+      const password = prompt('삭제를 위해 비밀번호를 입력하세요:');
+      if (password === null || password.trim() === '') return;
+      
+      let pwInput = document.createElement('input');
+      pwInput.type = 'hidden';
+      pwInput.name = 'guestPw';
+      pwInput.value = password.trim();
+      form.appendChild(pwInput);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+  }
+  </script>
+
+</body>
 </html> 

@@ -8,13 +8,28 @@ import com.webserver.project.model.ArtistPost;
 @Mapper
 public interface ArtistPostMapper {
     
-    // 전체 예술인 게시글 목록
+    // 전체 예술인 게시글 목록 (기본: 최신순)
     @Select("SELECT ap.post_id as postId, ap.artist_id as artistId, ap.title, ap.content, " +
             "ap.image_url as imageUrl, ap.image_name as imageName, ap.view_count as viewCount, " +
             "ap.created_at as createdAt, ap.updated_at as updatedAt, u.display_name as displayName " +
             "FROM ArtistPosts ap JOIN Users u ON ap.artist_id = u.user_id " +
             "ORDER BY ap.created_at DESC")
     List<ArtistPost> findAll();
+    
+    // 정렬 옵션으로 예술인 게시글 목록 조회
+    @Select("<script>" +
+            "SELECT ap.post_id as postId, ap.artist_id as artistId, ap.title, ap.content, " +
+            "ap.image_url as imageUrl, ap.image_name as imageName, ap.view_count as viewCount, " +
+            "ap.created_at as createdAt, ap.updated_at as updatedAt, u.display_name as displayName " +
+            "FROM ArtistPosts ap JOIN Users u ON ap.artist_id = u.user_id " +
+            "ORDER BY " +
+            "<choose>" +
+            "<when test='sort == \"oldest\"'>ap.created_at ASC</when>" +
+            "<when test='sort == \"views\"'>ap.view_count DESC, ap.created_at DESC</when>" +
+            "<otherwise>ap.created_at DESC</otherwise>" +
+            "</choose>" +
+            "</script>")
+    List<ArtistPost> findAllWithSort(@Param("sort") String sort);
     
     // ID로 예술인 게시글 조회
     @Select("SELECT ap.post_id as postId, ap.artist_id as artistId, ap.title, ap.content, " +
@@ -59,4 +74,35 @@ public interface ArtistPostMapper {
             "FROM ArtistPosts ap JOIN Users u ON ap.artist_id = u.user_id " +
             "ORDER BY ap.created_at DESC LIMIT #{limit}")
     List<ArtistPost> findRecentPosts(@Param("limit") int limit);
+    
+    // 페이지네이션과 정렬을 지원하는 게시글 목록 조회
+    @Select("<script>" +
+            "SELECT ap.post_id as postId, ap.artist_id as artistId, ap.title, ap.content, " +
+            "ap.image_url as imageUrl, ap.image_name as imageName, ap.view_count as viewCount, " +
+            "ap.created_at as createdAt, ap.updated_at as updatedAt, u.display_name as displayName " +
+            "FROM ArtistPosts ap JOIN Users u ON ap.artist_id = u.user_id " +
+            "ORDER BY " +
+            "<choose>" +
+            "<when test='sort == \"oldest\"'>ap.created_at ASC</when>" +
+            "<when test='sort == \"views\"'>ap.view_count DESC, ap.created_at DESC</when>" +
+            "<otherwise>ap.created_at DESC</otherwise>" +
+            "</choose>" +
+            " LIMIT #{limit} OFFSET #{offset}" +
+            "</script>")
+    List<ArtistPost> findAllWithSortAndPagination(@Param("sort") String sort, @Param("limit") int limit, @Param("offset") int offset);
+    
+    // 전체 게시글 개수 조회
+    @Select("SELECT COUNT(*) FROM ArtistPosts")
+    int getTotalCount();
+    
+    // 특정 예술가의 최근 게시글 조회 (현재 글 제외)
+    @Select("SELECT ap.post_id as postId, ap.artist_id as artistId, ap.title, ap.content, " +
+            "ap.image_url as imageUrl, ap.image_name as imageName, ap.view_count as viewCount, " +
+            "ap.created_at as createdAt, ap.updated_at as updatedAt, u.display_name as displayName " +
+            "FROM ArtistPosts ap JOIN Users u ON ap.artist_id = u.user_id " +
+            "WHERE ap.artist_id = #{artistId} AND ap.post_id != #{currentPostId} " +
+            "ORDER BY ap.created_at DESC LIMIT #{limit}")
+    List<ArtistPost> findRecentPostsByArtistExcludingCurrent(@Param("artistId") Integer artistId, 
+                                                            @Param("currentPostId") Integer currentPostId, 
+                                                            @Param("limit") int limit);
 } 

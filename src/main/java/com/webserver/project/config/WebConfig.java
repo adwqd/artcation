@@ -14,10 +14,12 @@ public class WebConfig implements WebMvcConfigurer {
     
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Spring Boot 기본 정적 리소스 경로 사용
-        // /uploads/** 요청을 classpath:/static/uploads/로 매핑
+        // 업로드된 파일들을 실제 업로드 경로로 매핑
+        File uploadDir = new File(uploadPath);
+        String uploadLocation = "file:" + uploadDir.getAbsolutePath() + "/";
+        
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("classpath:/static/uploads/");
+                .addResourceLocations(uploadLocation);
         
         // 기본 정적 리소스 핸들러 (assets 등)
         registry.addResourceHandler("/assets/**")

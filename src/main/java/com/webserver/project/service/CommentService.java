@@ -21,8 +21,24 @@ public class CommentService {
     return mapper.findByArtistPost(postId);
   }
 
+  // 통합 댓글 조회 (postType으로 구분)
+  public List<Comment> getCommentsByPost(int postId, String postType) {
+    if ("community".equals(postType)) {
+      return mapper.findByPost(postId);
+    } else if ("artist".equals(postType)) {
+      return mapper.findByArtistPost(postId);
+    } else {
+      throw new IllegalArgumentException("지원하지 않는 게시글 타입입니다: " + postType);
+    }
+  }
+
   // 댓글 상세 조회
   public Comment getById(int commentId) {
+    return mapper.findById(commentId);
+  }
+
+  // 댓글 상세 조회 (별칭)
+  public Comment getCommentById(int commentId) {
     return mapper.findById(commentId);
   }
 
@@ -41,13 +57,28 @@ public class CommentService {
     mapper.insert(c);
   }
 
+  // 댓글 작성 (별칭)
+  public void addComment(Comment c) {
+    add(c);
+  }
+
   // 댓글 수정
   public void update(Comment c) {
     mapper.update(c);
   }
 
+  // 댓글 수정 (별칭)
+  public void updateComment(Comment c) {
+    mapper.update(c);
+  }
+
   // 댓글 삭제
   public void delete(int commentId) {
+    mapper.delete(commentId);
+  }
+
+  // 댓글 삭제 (별칭)
+  public void deleteComment(int commentId) {
     mapper.delete(commentId);
   }
 
