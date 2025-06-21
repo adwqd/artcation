@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Comment {
   private Integer commentId;
-  private String postType;     // 'community'
+  private String postType;     // 'community', 'artist'
   private Integer postId;
   private Integer authorId;    // 회원
   private String guestName;    // 비회원
@@ -17,6 +17,9 @@ public class Comment {
   private String content;
   private Integer likeCount;
   private LocalDateTime createdAt;
+  
+  // 조회용 필드 (JOIN 결과)
+  private String authorName;   // 로그인 사용자의 display_name 또는 guestName
   // getters/setters omitted
 }
 

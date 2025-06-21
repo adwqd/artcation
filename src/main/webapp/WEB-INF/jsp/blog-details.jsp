@@ -177,14 +177,27 @@
                 <!-- 예술인 정보 -->
                 <div class="artist-info">
                   <div class="row align-items-center">
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                       <h4><i class="bi bi-palette"></i> 예술인: <c:out value="${post.displayName}" default="익명"/></h4>
                       <p class="mb-0">고성 지역에서 활동하는 예술인입니다.</p>
                     </div>
-                    <div class="col-md-4 text-end">
+                    <div class="col-md-3 text-center">
                       <div class="artist-stats">
                         <small><i class="bi bi-eye"></i> 조회 ${post.viewCount}회</small>
                       </div>
+                    </div>
+                    <div class="col-md-3 text-end">
+                      <!-- 수정/삭제 버튼 (작성자 또는 관리자만 표시) -->
+                      <c:if test="${sessionScope.loginUser != null && (sessionScope.userId == post.artistId || sessionScope.role == 'admin')}">
+                        <div class="btn-group" role="group">
+                          <a href="<c:url value='/artist/edit/${post.postId}'/>" class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil-square"></i> 수정
+                          </a>
+                          <button type="button" class="btn btn-danger btn-sm" onclick="deletePost(${post.postId})">
+                            <i class="bi bi-trash"></i> 삭제
+                          </button>
+                        </div>
+                      </c:if>
                     </div>
                   </div>
                 </div>
@@ -258,19 +271,74 @@
                   <c:choose>
                     <c:when test="${not empty comments}">
                       <c:forEach var="comment" items="${comments}">
-                        <div id="comment-${comment.id}" class="comment border-bottom pb-3 mb-3">
+                        <div id="comment-${comment.commentId}" class="comment border-bottom pb-3 mb-3">
                           <div class="d-flex">
                             <div class="comment-avatar me-3">
-                              <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                                <i class="bi bi-person-fill text-white"></i>
-                              </div>
+                              <c:choose>
+                                <c:when test="${comment.authorId != null}">
+                                  <!-- 로그인 사용자 (예술인) -->
+                                  <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-palette-fill text-white"></i>
+                                  </div>
+                                </c:when>
+                                <c:otherwise>
+                                  <!-- 게스트 사용자 -->
+                                  <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-person-fill text-white"></i>
+                                  </div>
+                                </c:otherwise>
+                              </c:choose>
                             </div>
                             <div class="flex-grow-1">
                               <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="mb-0"><c:out value="${comment.author}"/></h6>
-                                <small class="text-muted">
-                                  <fmt:formatDate value="${comment.createdAt}" pattern="yyyy년 MM월 dd일 HH:mm"/>
-                                </small>
+                                <div>
+                                  <h6 class="mb-0">
+                                    <c:out value="${comment.authorName}"/>
+                                    <c:if test="${comment.authorId != null}">
+                                      <span class="badge bg-success ms-2">예술인</span>
+                                    </c:if>
+                                  </h6>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                  <small class="text-muted me-3">
+                                    <c:choose>
+                                      <c:when test="${comment.createdAt != null}">
+                                        ${comment.createdAt.year}년 ${comment.createdAt.monthValue}월 ${comment.createdAt.dayOfMonth}일 
+                                        ${comment.createdAt.hour}:${comment.createdAt.minute < 10 ? '0' : ''}${comment.createdAt.minute}
+                                      </c:when>
+                                      <c:otherwise>
+                                        방금 전
+                                      </c:otherwise>
+                                    </c:choose>
+                                  </small>
+                                  
+                                  <!-- 수정/삭제 버튼 -->
+                                  <c:set var="canModify" value="false"/>
+                                  <c:choose>
+                                    <c:when test="${sessionScope.role == 'admin'}">
+                                      <c:set var="canModify" value="true"/>
+                                    </c:when>
+                                    <c:when test="${comment.authorId != null && sessionScope.userId == comment.authorId}">
+                                      <c:set var="canModify" value="true"/>
+                                    </c:when>
+                                  </c:choose>
+                                  
+                                  <c:if test="${canModify || comment.authorId == null}">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                      <button type="button" class="btn btn-outline-warning btn-sm edit-comment-btn" 
+                                              data-comment-id="${comment.commentId}" 
+                                              data-comment-content="<c:out value='${comment.content}'/>"
+                                              data-is-guest="${comment.authorId == null}">
+                                        <i class="bi bi-pencil"></i>
+                                      </button>
+                                      <button type="button" class="btn btn-outline-danger btn-sm delete-comment-btn" 
+                                              data-comment-id="${comment.commentId}"
+                                              data-is-guest="${comment.authorId == null}">
+                                        <i class="bi bi-trash"></i>
+                                      </button>
+                                    </div>
+                                  </c:if>
+                                </div>
                               </div>
                               <p class="mb-0" style="line-height: 1.6;"><c:out value="${comment.content}"/></p>
                             </div>
@@ -294,41 +362,81 @@
           <section id="comment-form" class="comment-form section">
             <div class="container">
               <div class="comment-form-korean">
-                <form action="<c:url value='/blog/${post.postId}/comment'/>" method="post">
+                <!-- 플래시 메시지 표시 -->
+                <c:if test="${not empty error}">
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i> ${error}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>
+                </c:if>
+                <c:if test="${not empty success}">
+                  <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill"></i> ${success}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>
+                </c:if>
+
+                <form action="<c:url value='/comment/artist/${post.postId}'/>" method="post">
                   <h4 class="mb-4">
                     <i class="bi bi-pencil-square text-primary"></i> 댓글 작성
                   </h4>
-                  <p class="text-muted mb-4">여러분의 소중한 의견을 들려주세요. * 표시는 필수 입력 항목입니다.</p>
                   
-                  <div class="row">
-                    <div class="col-md-6 form-group mb-3">
-                      <label for="author" class="form-label">이름 *</label>
-                      <input name="author" type="text" class="form-control" id="author" placeholder="이름을 입력해주세요" required>
-                    </div>
-                    <div class="col-md-6 form-group mb-3">
-                      <label for="email" class="form-label">이메일 *</label>
-                      <input name="email" type="email" class="form-control" id="email" placeholder="이메일을 입력해주세요" required>
-                    </div>
-                  </div>
-                  
-                  <div class="row">
-                    <div class="col form-group mb-3">
-                      <label for="website" class="form-label">웹사이트 (선택)</label>
-                      <input name="website" type="url" class="form-control" id="website" placeholder="웹사이트 주소 (선택사항)">
-                    </div>
-                  </div>
-                  
-                  <div class="row">
-                    <div class="col form-group mb-4">
-                      <label for="content" class="form-label">댓글 내용 *</label>
-                      <textarea name="content" class="form-control" id="content" rows="5" placeholder="댓글을 입력해주세요..." required></textarea>
-                    </div>
-                  </div>
+                  <c:choose>
+                    <c:when test="${not empty sessionScope.loginUser}">
+                      <!-- 로그인된 예술인 -->
+                      <div class="alert alert-info mb-4">
+                        <i class="bi bi-person-check-fill"></i>
+                        <strong>${sessionScope.displayName}님</strong>으로 댓글을 작성합니다.
+                      </div>
+                      
+                      <div class="row">
+                        <div class="col form-group mb-4">
+                          <label for="content" class="form-label">댓글 내용 *</label>
+                          <textarea name="content" class="form-control" id="content" rows="5" placeholder="댓글을 입력해주세요..." required></textarea>
+                        </div>
+                      </div>
+                    </c:when>
+                    <c:otherwise>
+                      <!-- 비로그인 사용자 -->
+                      <p class="text-muted mb-4">
+                        <i class="bi bi-info-circle"></i>
+                        비회원으로 댓글을 작성합니다. 수정/삭제 시 비밀번호가 필요합니다.
+                      </p>
+                      
+                      <div class="row">
+                        <div class="col-md-6 form-group mb-3">
+                          <label for="guestName" class="form-label">이름 *</label>
+                          <input name="guestName" type="text" class="form-control" id="guestName" placeholder="이름을 입력해주세요" required>
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
+                          <label for="guestPw" class="form-label">비밀번호 *</label>
+                          <input name="guestPw" type="password" class="form-control" id="guestPw" placeholder="수정/삭제용 비밀번호" required>
+                          <div class="form-text">댓글 수정/삭제 시 사용됩니다.</div>
+                        </div>
+                      </div>
+                      
+                      <div class="row">
+                        <div class="col form-group mb-4">
+                          <label for="content" class="form-label">댓글 내용 *</label>
+                          <textarea name="content" class="form-control" id="content" rows="5" placeholder="댓글을 입력해주세요..." required></textarea>
+                        </div>
+                      </div>
+                    </c:otherwise>
+                  </c:choose>
 
                   <div class="text-center">
                     <button type="submit" class="btn btn-primary btn-lg px-5">
                       <i class="bi bi-send"></i> 댓글 등록
                     </button>
+                    <c:if test="${empty sessionScope.loginUser}">
+                      <div class="mt-3">
+                        <small class="text-muted">
+                          <i class="bi bi-shield-check"></i>
+                          예술인으로 로그인하면 더 편리하게 댓글을 관리할 수 있습니다.
+                          <a href="<c:url value='/login'/>" class="text-decoration-none">로그인하기</a>
+                        </small>
+                      </div>
+                    </c:if>
                   </div>
                 </form>
               </div>
@@ -477,6 +585,98 @@
 
   <!-- Main JS File -->
   <script src="<c:url value='/assets/js/main.js'/>"></script>
+
+  <!-- 댓글 관리 JavaScript -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 댓글 수정 버튼 이벤트
+    document.querySelectorAll('.edit-comment-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const commentId = this.dataset.commentId;
+        const content = this.dataset.commentContent;
+        const isGuest = this.dataset.isGuest === 'true';
+        
+        editComment(commentId, content, isGuest);
+      });
+    });
+    
+    // 댓글 삭제 버튼 이벤트
+    document.querySelectorAll('.delete-comment-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const commentId = this.dataset.commentId;
+        const isGuest = this.dataset.isGuest === 'true';
+        
+        deleteComment(commentId, isGuest);
+      });
+    });
+  });
+
+  function editComment(commentId, content, isGuest) {
+    const newContent = prompt('댓글 내용을 수정하세요:', content);
+    if (newContent === null || newContent.trim() === '') return;
+    
+    let form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<c:url value="/comment/edit/"/>' + commentId;
+    
+    // 내용 필드
+    let contentInput = document.createElement('input');
+    contentInput.type = 'hidden';
+    contentInput.name = 'content';
+    contentInput.value = newContent.trim();
+    form.appendChild(contentInput);
+    
+    // 게스트인 경우 비밀번호 확인
+    if (isGuest) {
+      const password = prompt('수정을 위해 비밀번호를 입력하세요:');
+      if (password === null || password.trim() === '') return;
+      
+      let pwInput = document.createElement('input');
+      pwInput.type = 'hidden';
+      pwInput.name = 'guestPw';
+      pwInput.value = password.trim();
+      form.appendChild(pwInput);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  function deleteComment(commentId, isGuest) {
+    if (!confirm('댓글을 삭제하시겠습니까?')) return;
+    
+    let form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<c:url value="/comment/delete/"/>' + commentId;
+    
+    // 게스트인 경우 비밀번호 확인
+    if (isGuest) {
+      const password = prompt('삭제를 위해 비밀번호를 입력하세요:');
+      if (password === null || password.trim() === '') return;
+      
+      let pwInput = document.createElement('input');
+      pwInput.type = 'hidden';
+      pwInput.name = 'guestPw';
+      pwInput.value = password.trim();
+      form.appendChild(pwInput);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  // 블로그 글 삭제 함수
+  function deletePost(postId) {
+    if (!confirm('이 기록을 삭제하시겠습니까?\n삭제된 기록은 복구할 수 없습니다.')) return;
+    
+    let form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<c:url value="/artist/delete/"/>' + postId;
+    
+    document.body.appendChild(form);
+    form.submit();
+  }
+  </script>
 
 </body>
 </html>
