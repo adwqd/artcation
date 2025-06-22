@@ -89,39 +89,92 @@
 
     /* 드롭다운 메뉴 스타일 */
     .dropdown-menu {
-      border: none;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      border-radius: 8px;
+      border: none !important;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+      border-radius: 8px !important;
+      z-index: 9999 !important;
+      min-width: 150px !important;
+      position: absolute !important;
+      top: 100% !important;
+      left: auto !important;
+      right: 0 !important;
+      display: none !important;
     }
     
-    .dropdown-item:hover {
-      background-color: #f8f9fa;
+    .dropdown-menu.show {
+      display: block !important;
     }
     
-    .dropdown-item.text-danger:hover {
-      background-color: #f8d7da;
-      color: #721c24 !important;
+    /* 드롭다운 컨테이너 */
+    .dropdown {
+      position: relative !important;
     }
     
-    /* 토글 버튼 스타일 */
-    .btn-toggle {
-      background: none;
-      border: none;
-      color: #6c757d;
-      font-size: 1.2rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      transition: all 0.2s ease;
+    /* 드롭다운 버튼 기본 스타일 */
+    .dropdown-toggle {
+      cursor: pointer !important;
+      user-select: none !important;
+      pointer-events: auto !important;
     }
     
-    .btn-toggle:hover {
-      background-color: #f8f9fa;
-      color: #ff6b35;
-      transform: translateY(-1px);
+    /* 템플릿 기본 드롭다운 비활성화 (충돌 방지) */
+    .toggle-dropdown {
+      pointer-events: none !important;
     }
-
-    /* 드롭다운 토글 버튼 호버 효과 */
-    .btn-outline-secondary:hover {
+    
+    /* Bootstrap 드롭다운 우선순위 */
+    [data-bs-toggle="dropdown"] {
+      pointer-events: auto !important;
+      z-index: 1000 !important;
+    }
+    
+    .dropdown-item {
+      border: none !important;
+      outline: none !important;
+      pointer-events: auto !important;
+      cursor: pointer !important;
+      display: block !important;
+      width: 100% !important;
+      background: transparent !important;
+      color: #000000 !important;
+    }
+    
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+      background-color: transparent !important;
+      color: #ff6b35 !important;
+    }
+    
+    .dropdown-item.text-danger:hover,
+    .dropdown-item.text-danger:focus {
+      background-color: transparent !important;
+      color: #dc3545 !important;
+    }
+    
+    /* 드롭다운 토글 버튼 스타일 */
+    .dropdown-toggle {
+      border: 1px solid #6c757d !important;
+      background: white !important;
+      color: #6c757d !important;
+    }
+    
+    .dropdown-toggle:hover,
+    .dropdown-toggle:focus,
+    .dropdown-toggle:active,
+    .dropdown-toggle.show {
+      background-color: #ff6b35 !important;
+      border-color: #ff6b35 !important;
+      color: white !important;
+      box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+    }
+    
+    /* 드롭다운 화살표 숨기기 (three-dots 아이콘 사용) */
+    .dropdown-toggle::after {
+      display: none !important;
+    }
+    
+    /* 드롭다운이 열렸을 때 배경 스타일 */
+    .dropdown.show .dropdown-toggle {
       background-color: #ff6b35 !important;
       border-color: #ff6b35 !important;
       color: white !important;
@@ -137,6 +190,58 @@
     textarea.form-control:hover, textarea.form-control:focus {
       border-color: #ff6b35 !important;
       box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+    }
+    
+    /* 메타 정보 한 줄 표시 */
+    .post-meta-enhanced .col-md-4 {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.9rem;
+    }
+    
+    /* 모바일에서는 줄바꿈 허용 */
+    @media (max-width: 768px) {
+      .post-meta-enhanced .col-md-4 {
+        white-space: normal;
+        margin-bottom: 0.5rem;
+      }
+    }
+    
+    /* 댓글 드롭다운 위치 조정 */
+    .comment .dropdown-menu {
+      position: absolute !important;
+      top: auto !important;
+      bottom: 100% !important;
+      right: 0 !important;
+      left: auto !important;
+      transform: translateY(-5px) !important;
+      z-index: 9999 !important;
+      margin-bottom: 5px !important;
+    }
+    
+    /* 댓글 컨테이너에 충분한 여백 확보 */
+    .comment {
+      position: relative !important;
+      margin-bottom: 2rem !important;
+      padding-bottom: 1rem !important;
+    }
+    
+    /* 댓글 드롭다운이 위로 열릴 때 화살표 방향 조정 */
+    .comment .dropdown-toggle::after {
+      display: none !important;
+    }
+    
+    /* 로그인 후 드롭다운 메뉴만 특별한 스타일 */
+    .navmenu .dropdown ul a[href*="/artist/write"],
+    .navmenu .dropdown ul a[href*="/logout"] {
+      color: #000000 !important;
+    }
+
+    .navmenu .dropdown ul a[href*="/artist/write"]:hover,
+    .navmenu .dropdown ul a[href*="/logout"]:hover {
+      background-color: transparent !important;
+      color: #ff6b35 !important;
     }
   </style>
 </head>
@@ -219,25 +324,33 @@
               <article class="article">
 
                 <!-- 제목과 작업 도구 -->
-                <div class="d-flex justify-content-between align-items-start mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-5">
                   <h2 class="title mb-0"><c:out value="${post.title}" default="제목 없음"/></h2>
+                  
+
                   
                   <!-- 수정/삭제 버튼 (작성자 또는 관리자만 표시) -->
                   <c:if test="${not empty sessionScope.loginUser && (sessionScope.userId == post.artistId || sessionScope.role == 'admin')}">
                     <div class="dropdown">
-                      <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-three-dots-vertical"></i>
                       </button>
-                      <ul class="dropdown-menu dropdown-menu-end">
+                      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
                         <li>
                           <a class="dropdown-item" href="<c:url value='/artist/edit/${post.postId}'/>">
                             <i class="bi bi-pencil me-2"></i>수정
+                            <c:if test="${sessionScope.role == 'admin' && sessionScope.userId != post.artistId}">
+                              <span class="badge bg-warning ms-2">관리자</span>
+                            </c:if>
                           </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                          <button class="dropdown-item text-danger" onclick="deletePost(${post.postId})">
+                          <button type="button" class="dropdown-item text-danger" onclick="deletePost('${post.postId}')">
                             <i class="bi bi-trash me-2"></i>삭제
+                            <c:if test="${sessionScope.role == 'admin' && sessionScope.userId != post.artistId}">
+                              <span class="badge bg-warning ms-2">관리자</span>
+                            </c:if>
                           </button>
                         </li>
                       </ul>
@@ -255,17 +368,17 @@
                 <!-- 게시글 메타 정보 -->
                 <div class="post-meta-enhanced">
                   <div class="row text-center">
-                    <div class="col-md-4">
+                    <div class="col-md-4 text-nowrap">
                       <i class="bi bi-calendar3 text-primary"></i>
                       <strong>작성일:</strong>
-                      <time datetime="${post.createdAt}">${post.createdAt.toString().replace('T', ' ').substring(0, 19)}</time>
+                      <time datetime="${post.createdAt}" class="d-inline-block">${post.createdAt.toString().replace('T', ' ').substring(0, 16)}</time>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 text-nowrap">
                       <i class="bi bi-chat-dots text-success"></i>
                       <strong>댓글:</strong>
                       <span><c:out value="${commentCount}" default="0"/>개</span>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 text-nowrap">
                       <i class="bi bi-eye text-info"></i>
                       <strong>조회:</strong>
                       <span>${post.viewCount}회</span>
@@ -332,16 +445,30 @@
                                 <div>
                                   <h6 class="mb-0">
                                     <c:out value="${comment.authorName}"/>
-                                    <c:if test="${comment.authorId != null}">
-                                      <span class="badge bg-success ms-2">예술인</span>
-                                    </c:if>
+                                    <c:choose>
+                                      <c:when test="${comment.authorId != null}">
+                                        <!-- 로그인 사용자: 관리자인지 확인 -->
+                                        <c:choose>
+                                          <c:when test="${comment.authorRole eq 'admin'}">
+                                            <span class="badge bg-danger ms-2">관리자</span>
+                                          </c:when>
+                                          <c:otherwise>
+                                            <span class="badge bg-success ms-2">예술인</span>
+                                          </c:otherwise>
+                                        </c:choose>
+                                      </c:when>
+                                      <c:otherwise>
+                                        <!-- 비회원 -->
+                                        <span class="badge bg-secondary ms-2">비회원</span>
+                                      </c:otherwise>
+                                    </c:choose>
                                   </h6>
                                 </div>
                                 <div class="d-flex align-items-center">
                                   <small class="text-muted me-3">
                                     <c:choose>
                                       <c:when test="${comment.createdAt != null}">
-${comment.createdAt.toString().replace('T', ' ').substring(0, 19)}
+                                        ${comment.createdAt.toString().replace('T', ' ').substring(0, 16)}
                                       </c:when>
                                       <c:otherwise>
                                         방금 전
@@ -362,12 +489,12 @@ ${comment.createdAt.toString().replace('T', ' ').substring(0, 19)}
                                   
                                   <c:if test="${canModify || comment.authorId == null}">
                                     <div class="dropdown">
-                                      <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                      <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="commentDropdown${comment.commentId}" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
                                       </button>
-                                      <ul class="dropdown-menu dropdown-menu-end">
+                                      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="commentDropdown${comment.commentId}">
                                         <li>
-                                          <button class="dropdown-item edit-comment-btn" 
+                                          <button type="button" class="dropdown-item edit-comment-btn" 
                                                   data-comment-id="${comment.commentId}" 
                                                   data-comment-content="<c:out value='${comment.content}'/>"
                                                   data-is-guest="${comment.authorId == null}">
@@ -376,7 +503,7 @@ ${comment.createdAt.toString().replace('T', ' ').substring(0, 19)}
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                          <button class="dropdown-item text-danger delete-comment-btn" 
+                                          <button type="button" class="dropdown-item text-danger delete-comment-btn" 
                                                   data-comment-id="${comment.commentId}"
                                                   data-is-guest="${comment.authorId == null}">
                                             <i class="bi bi-trash me-2"></i>삭제
@@ -670,8 +797,10 @@ ${comment.createdAt.toString().replace('T', ' ').substring(0, 19)}
   }
 
   // 블로그 글 삭제 함수
-  function deletePost(postId) {
-    if (!confirm('이 기록을 삭제하시겠습니까?\n삭제된 기록은 복구할 수 없습니다.')) return;
+  window.deletePost = function(postId) {
+    if (!confirm('이 기록을 삭제하시겠습니까?\n삭제된 기록은 복구할 수 없습니다.')) {
+      return;
+    }
     
     let form = document.createElement('form');
     form.method = 'POST';
@@ -679,9 +808,52 @@ ${comment.createdAt.toString().replace('T', ' ').substring(0, 19)}
     
     document.body.appendChild(form);
     form.submit();
-  }
+  };
+  
+  // 드롭다운 초기화
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      if (typeof bootstrap === 'undefined') {
+        return;
+      }
+      
+      // 템플릿 기본 드롭다운 비활성화 (충돌 방지)
+      const templateDropdowns = document.querySelectorAll('.toggle-dropdown');
+      templateDropdowns.forEach(function(element) {
+        element.style.pointerEvents = 'none';
+      });
+      
+      // Bootstrap 드롭다운 초기화
+      const dropdownButtons = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+      dropdownButtons.forEach(function(button) {
+        const existingInstance = bootstrap.Dropdown.getInstance(button);
+        if (existingInstance) {
+          existingInstance.dispose();
+        }
+        
+        try {
+          new bootstrap.Dropdown(button);
+        } catch (error) {
+          // 초기화 실패 시 무시
+        }
+      });
+      
+    }, 1000);
+  });
+  
+  // 삭제 버튼 클릭 처리
+  document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.getAttribute('onclick')) {
+        const onclickAttr = e.target.getAttribute('onclick');
+        if (onclickAttr.includes('deletePost')) {
+          e.stopPropagation();
+          eval(onclickAttr);
+        }
+      }
+    });
+  });
   </script>
 
 </body>
-</html>
-<%@ include file="common/footer.jsp" %> 
+</html> 

@@ -199,9 +199,10 @@
     .search-result-info {
       background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
       color: white;
-      border-radius: 10px;
       padding: 15px 20px;
-      margin-bottom: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
     .search-form .form-control:focus {
@@ -217,6 +218,18 @@
     .search-form .btn-primary:hover {
       background-color: #e55a2b;
       border-color: #e55a2b;
+    }
+
+    /* 로그인 후 드롭다운 메뉴만 특별한 스타일 */
+    .navmenu .dropdown ul a[href*="/artist/write"],
+    .navmenu .dropdown ul a[href*="/logout"] {
+      color: #000000 !important;
+    }
+
+    .navmenu .dropdown ul a[href*="/artist/write"]:hover,
+    .navmenu .dropdown ul a[href*="/logout"]:hover {
+      background-color: transparent !important;
+      color: #ff6b35 !important;
     }
   </style>
 </head>

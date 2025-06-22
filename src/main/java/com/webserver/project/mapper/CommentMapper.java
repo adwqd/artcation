@@ -10,7 +10,8 @@ public interface CommentMapper {
   @Select("SELECT c.comment_id as commentId, c.post_type as postType, c.post_id as postId, " +
           "c.author_id as authorId, c.guest_name as guestName, c.guest_pw as guestPw, " +
           "c.content, c.like_count as likeCount, c.created_at as createdAt, " +
-          "CASE WHEN c.author_id IS NOT NULL THEN u.display_name ELSE c.guest_name END as authorName " +
+          "CASE WHEN c.author_id IS NOT NULL THEN u.display_name ELSE c.guest_name END as authorName, " +
+          "u.role as authorRole " +
           "FROM Comments c " +
           "LEFT JOIN Users u ON c.author_id = u.user_id " +
           "WHERE c.post_type='community' AND c.post_id=#{postId} " +
@@ -20,7 +21,8 @@ public interface CommentMapper {
   @Select("SELECT c.comment_id as commentId, c.post_type as postType, c.post_id as postId, " +
           "c.author_id as authorId, c.guest_name as guestName, c.guest_pw as guestPw, " +
           "c.content, c.like_count as likeCount, c.created_at as createdAt, " +
-          "CASE WHEN c.author_id IS NOT NULL THEN u.display_name ELSE c.guest_name END as authorName " +
+          "CASE WHEN c.author_id IS NOT NULL THEN u.display_name ELSE c.guest_name END as authorName, " +
+          "CASE WHEN c.author_id = 13 THEN 'admin' ELSE COALESCE(u.role, 'user') END as authorRole " +
           "FROM Comments c " +
           "LEFT JOIN Users u ON c.author_id = u.user_id " +
           "WHERE c.post_type='artist' AND c.post_id=#{postId} " +

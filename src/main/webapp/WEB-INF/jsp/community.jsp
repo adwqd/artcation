@@ -42,9 +42,37 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
 
     <!-- Main CSS File -->
     <link href="<c:url value='/assets/css/main.css'/>" rel="stylesheet" />
-    
-    <!-- Custom CSS for Community -->
+
     <style>
+      .search-form .btn-primary:hover {
+        background-color: #e55a2b;
+        border-color: #e55a2b;
+      }
+      
+      /* 검색 결과 스타일 */
+      .search-result-info {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      }
+
+      .search-form .form-control:focus {
+        border-color: #ff6b35;
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+      }
+
+      .search-form .btn-primary {
+        background-color: #ff6b35;
+        border-color: #ff6b35;
+      }
+
+      .search-form .btn-primary:hover {
+        background-color: #e55a2b;
+        border-color: #e55a2b;
+      }
+
       /* 페이지네이션 스타일 */
       .pagination .page-link {
         color: #333;
@@ -75,52 +103,27 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
         background-color: #e9ecef;
         border-color: #dee2e6;
       }
-
-      /* 커뮤니티 행 호버 효과 */
-      .community-row:hover {
-        background-color: #f8f9fa !important;
-        transform: translateY(-1px);
-        transition: all 0.2s ease;
+      
+      /* 로그인 후 드롭다운 메뉴만 특별한 스타일 */
+      .navmenu .dropdown ul a[href*="/artist/write"],
+      .navmenu .dropdown ul a[href*="/logout"] {
+        color: #000000 !important;
       }
 
-      .community-row {
-        transition: all 0.2s ease;
-      }
-
-      /* 검색 결과 스타일 */
-      .search-result-info {
-        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-        color: white;
-        border-radius: 10px;
-        padding: 15px 20px;
-        margin-bottom: 20px;
-      }
-
-      .search-form .form-control:focus {
-        border-color: #ff6b35;
-        box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
-      }
-
-      .search-form .btn-primary {
-        background-color: #ff6b35;
-        border-color: #ff6b35;
-      }
-
-      .search-form .btn-primary:hover {
-        background-color: #e55a2b;
-        border-color: #e55a2b;
+      .navmenu .dropdown ul a[href*="/artist/write"]:hover,
+      .navmenu .dropdown ul a[href*="/logout"]:hover {
+        background-color: transparent !important;
+        color: #ff6b35 !important;
       }
     </style>
   </head>
 
-  <body class="community-page">
+  <body>
     <header id="header" class="header d-flex align-items-center fixed-top">
       <div
         class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between"
       >
         <a href="<c:url value='/'/>" class="logo d-flex align-items-center">
-          <!-- Uncomment the line below if you also wish to use an image logo -->
-          <!-- <img src="<c:url value='/assets/img/logo.png'/>" alt=""> -->
           <h1 class="sitename">Artcation Goseong</h1>
         </a>
 
@@ -130,20 +133,20 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
             <li><a href="<c:url value='/#about'/>">아트케이션 고성이란?</a></li>
             <li><a href="<c:url value='/blog'/>">예술인 기록</a></li>
             <li><a href="<c:url value='/community'/>" class="active">커뮤니티</a></li>
-            
+    
             <c:choose>
-            <c:when test="${not empty sessionScope.loginUser}">
-              <li class="dropdown"><a href="#"><span>${sessionScope.displayName}님</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                <ul>
-                  <li><a href="<c:url value='/artist/write'/>">기록 작성</a></li>
-                  <li><a href="<c:url value='/logout'/>">로그아웃</a></li>
-                </ul>
-              </li>
-            </c:when>
-            <c:otherwise>
-              <li><a href="<c:url value='/login'/>">로그인</a></li>
-            </c:otherwise>
-          </c:choose>
+              <c:when test="${not empty sessionScope.loginUser}">
+                <li class="dropdown"><a href="#"><span>${sessionScope.displayName}님</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <ul>
+                    <li><a href="<c:url value='/artist/write'/>">기록 작성</a></li>
+                    <li><a href="<c:url value='/logout'/>">로그아웃</a></li>
+                  </ul>
+                </li>
+              </c:when>
+              <c:otherwise>
+                <li><a href="<c:url value='/login'/>">로그인</a></li>
+              </c:otherwise>
+            </c:choose>
           </ul>
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
@@ -154,8 +157,8 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       <!-- Page Title -->
       <div class="page-title dark-background">
         <div class="container position-relative">
-          <h1>커뮤니티</h1>
-          <p>고성 지역 예술인들과 시민들이 소통하고 공유하는 공간</p>
+          <h1>커뮤니티 <span style="color: #ff6b35;">게시판</span></h1>
+          <p>소통과 공유의 공간에서 다양한 이야기를 나누어보세요</p>
           
           <!-- 검색 폼 -->
           <div class="mt-4">
@@ -198,24 +201,9 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       <!-- Community Section -->
       <section class="community section">
         <div class="container">
-          
-          <!-- Flash Messages -->
-          <c:if test="${not empty message}">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-              ${message}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          </c:if>
-          <c:if test="${not empty error}">
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-              ${error}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          </c:if>
-          
-          <!-- 정렬 옵션과 글쓰기 버튼 -->
+          <!-- Write Post Button and Sort Options -->
           <div class="row mb-4">
-            <div class="col-lg-8 d-flex align-items-center">
+            <div class="col-md-6">
               <div class="d-flex align-items-center">
                 <label for="sortSelect" class="form-label me-2 mb-0"></label>
                 <select id="sortSelect" class="form-select" style="width: auto;" onchange="changeSortOrder()">
@@ -225,21 +213,24 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                 </select>
               </div>
             </div>
-            <div class="col-lg-4 text-end">
-              <a href="<c:url value='/community/write'/>" class="btn btn-primary">
+            <div class="col-md-6 text-end">
+              <a
+                href="<c:url value='/community/write'/>"
+                class="btn btn-primary"
+              >
                 <i class="bi bi-pencil"></i> 글쓰기
               </a>
             </div>
           </div>
-
+          
           <!-- 검색 결과 정보 -->
           <c:if test="${not empty searchKeyword}">
-            <div class="search-result-info">
+            <div class="search-result-info mb-4">
               <div class="d-flex align-items-center">
                 <i class="bi bi-search me-2" style="font-size: 1.5rem;"></i>
                 <div>
-                  <strong>"${searchKeyword}"</strong> 검색 결과
-                  <div class="small mt-1">총 ${totalPosts}개의 글을 찾았습니다.</div>
+                  <h5 class="mb-1">검색 결과</h5>
+                  <p class="mb-0">"<strong>${searchKeyword}</strong>" 검색 결과 총 <strong>${totalPosts}</strong>개의 글을 찾았습니다.</p>
                 </div>
               </div>
             </div>
@@ -260,15 +251,17 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                     </tr>
                   </thead>
                   <tbody>
-                                          <c:forEach var="post" items="${posts}" varStatus="status">
-                        <tr class="community-row" onclick="location.href='<c:url value='/community/view/${post.postId}'/>';" style="cursor: pointer;">
+                    <c:forEach var="post" items="${posts}" varStatus="status">
+                      <tr onclick="location.href='<c:url value='/community/view/${post.postId}'/>'" style="cursor: pointer;">
                         <td>${post.postId}</td>
                         <td>
-                          ${post.title}
+                          <a href="<c:url value='/community/view/${post.postId}'/>"
+                            >${post.title}</a
+                          >
                         </td>
                         <td>${post.authorName}</td>
                         <td>
-                          ${post.createdAt.toString().replace('T', ' ').substring(0, 19)}
+                          ${post.createdAt.toString().substring(0, 10)}
                         </td>
                         <td>${post.viewCount}</td>
                       </tr>
@@ -276,7 +269,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
 
                     <!-- Sample Posts (when no data) -->
                     <c:if test="${empty posts}">
-                      <tr>
+                      <tr onclick="location.href='#'" style="cursor: pointer;">
                         <td>1</td>
                         <td>
                           <a href="#">고성 아트케이션에 대한 의견</a>
@@ -285,7 +278,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                         <td>2024-06-20</td>
                         <td>15</td>
                       </tr>
-                      <tr>
+                      <tr onclick="location.href='#'" style="cursor: pointer;">
                         <td>2</td>
                         <td>
                           <a href="#">문화 행사 후기</a>
@@ -294,7 +287,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                         <td>2024-06-19</td>
                         <td>23</td>
                       </tr>
-                      <tr>
+                      <tr onclick="location.href='#'" style="cursor: pointer;">
                         <td>3</td>
                         <td>
                           <a href="#">전시회 소개</a>
@@ -309,6 +302,24 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
               </div>
             </div>
           </div>
+
+          <!-- 검색 결과가 없을 때 -->
+          <c:if test="${empty posts && not empty searchKeyword}">
+            <div class="row">
+              <div class="col-12 text-center py-5">
+                <div class="alert alert-info">
+                  <i class="bi bi-info-circle-fill me-2"></i>
+                  "<strong>${searchKeyword}</strong>"에 대한 검색 결과가 없습니다.
+                  <br><br>
+                  <small class="text-muted">
+                    • 다른 키워드로 검색해보세요<br>
+                    • 작성자 이름이나 제목을 정확히 입력해보세요<br>
+                    • 검색어를 줄여서 다시 시도해보세요
+                  </small>
+                </div>
+              </div>
+            </div>
+          </c:if>
 
           <!-- 페이지네이션 -->
           <c:if test="${totalPages > 1}">
@@ -346,7 +357,14 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
                 <!-- 페이지 정보 -->
                 <div class="text-center mt-3">
                   <small class="text-muted">
-                    총 ${totalPosts}개의 글 중 ${(currentPage - 1) * 10 + 1} - ${currentPage * 10 > totalPosts ? totalPosts : currentPage * 10}번째 글
+                    <c:choose>
+                      <c:when test="${not empty searchKeyword}">
+                        "${searchKeyword}" 검색 결과: 총 ${totalPosts}개 중 ${(currentPage - 1) * 10 + 1} - ${currentPage * 10 > totalPosts ? totalPosts : currentPage * 10}번째
+                      </c:when>
+                      <c:otherwise>
+                        총 ${totalPosts}개의 글 중 ${(currentPage - 1) * 10 + 1} - ${currentPage * 10 > totalPosts ? totalPosts : currentPage * 10}번째 글
+                      </c:otherwise>
+                    </c:choose>
                   </small>
                 </div>
               </div>
@@ -356,98 +374,32 @@ uri="http://java.sun.com/jsp/jstl/fmt" %>
       </section>
     </main>
 
+    <%@ include file="common/footer.jsp" %>
+
     <!-- Vendor JS Files -->
     <script src="<c:url value='/assets/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
     <script src="<c:url value='/assets/vendor/aos/aos.js'/>"></script>
+    <script src="<c:url value='/assets/vendor/glightbox/js/glightbox.min.js'/>"></script>
+    <script src="<c:url value='/assets/vendor/swiper/swiper-bundle.min.js'/>"></script>
 
     <!-- Main JS File -->
     <script src="<c:url value='/assets/js/main.js'/>"></script>
-
-    <style>
-      /* 커뮤니티 행 호버 효과 */
-      .community-row:hover {
-        background-color: #f8f9fa !important;
-        transform: translateY(-1px);
-        transition: all 0.2s ease;
-      }
-
-      .community-row {
-        transition: all 0.2s ease;
-      }
-
-      /* 페이지네이션 스타일 */
-      .pagination .page-link {
-        color: #333;
-        background-color: #ffffff;
-        border-color: #dee2e6;
-        padding: 0.3rem 1rem;
-        margin: 0 2px;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-      }
-
-      .pagination .page-link:hover {
-        color: #333;
-        background-color: #f8f9fa;
-        border-color: #dee2e6;
-        transform: translateY(-2px);
-      }
-
-      .pagination .page-item.active .page-link {
-        color: #ffffff;
-        background-color: #ff6b35;
-        border-color: #ff6b35;
-        box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
-      }
-
-      .pagination .page-item.disabled .page-link {
-        color: #6c757d;
-        background-color: #e9ecef;
-        border-color: #dee2e6;
-      }
-
-      /* 검색 결과 스타일 */
-      .search-result-info {
-        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-        color: white;
-        border-radius: 10px;
-        padding: 15px 20px;
-        margin-bottom: 20px;
-      }
-
-      .search-form .form-control:focus {
-        border-color: #ff6b35;
-        box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
-      }
-
-      .search-form .btn-primary {
-        background-color: #ff6b35;
-        border-color: #ff6b35;
-      }
-
-      .search-form .btn-primary:hover {
-        background-color: #e55a2b;
-        border-color: #e55a2b;
-      }
-    </style>
-
-    <!-- Sort functionality -->
+    
     <script>
       function changeSortOrder() {
-        const sortValue = document.getElementById('sortSelect').value;
-        const currentUrl = new URL(window.location);
-        currentUrl.searchParams.set('sort', sortValue);
-        currentUrl.searchParams.set('page', '1'); // 정렬 변경 시 첫 페이지로 이동
+        const sortSelect = document.getElementById('sortSelect');
+        const selectedSort = sortSelect.value;
         
-        // 검색어가 있다면 유지
-        const searchKeyword = '<c:out value="${searchKeyword}"/>';
-        if (searchKeyword && searchKeyword.trim() !== '') {
-          currentUrl.searchParams.set('search', searchKeyword);
-        }
+        // 현재 URL에서 파라미터 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
         
-        window.location.href = currentUrl.toString();
+        // 정렬 파라미터 설정
+        urlParams.set('sort', selectedSort);
+        urlParams.set('page', '1'); // 정렬 변경 시 첫 페이지로
+        
+        // 새 URL로 이동
+        window.location.href = '<c:url value="/community"/>' + '?' + urlParams.toString();
       }
     </script>
   </body>
 </html>
-<%@ include file="common/footer.jsp" %> 

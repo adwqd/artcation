@@ -109,7 +109,7 @@
               <div class="card-body">
                 <div class="post-meta mb-3">
                   <span class="author"><i class="bi bi-person"></i> ${post.authorName}</span>
-                  <span class="date ms-3"><i class="bi bi-calendar"></i> ${post.createdAt}</span>
+                  <span class="date ms-3"><i class="bi bi-calendar"></i> ${post.createdAt.toString().replace('T', ' ').substring(0, 19)}</span>
                   <span class="views ms-3"><i class="bi bi-eye"></i> ${post.viewCount}회</span>
                 </div>
               </div>
@@ -126,14 +126,13 @@
                 </div>
               </div>
 
-              <!-- 비로그인 사용자 글인 경우 비밀번호 확인 -->
+              <!-- 비밀번호는 이미 검증되었으므로 숨겨진 필드로 처리 -->
               <c:if test="${post.authorId == null}">
-                <div class="row gy-4 mb-4">
-                  <div class="col-md-12">
-                    <label for="password" class="form-label">비밀번호 확인 <span class="text-danger">*</span></label>
-                    <input type="password" name="password" id="password" class="form-control" placeholder="글 작성시 입력한 비밀번호를 입력하세요" required>
-                    <small class="form-text text-muted">수정을 위해 작성시 입력한 비밀번호가 필요합니다.</small>
-                  </div>
+                <input type="hidden" name="passwordVerified" value="true">
+                <div class="alert alert-success border-0 shadow-sm">
+                  <i class="bi bi-shield-check me-2"></i> 
+                  <strong>비밀번호가 확인되었습니다!</strong> 
+                  <br><small class="text-muted">이제 자유롭게 내용을 수정하세요. 추가 비밀번호 입력은 필요없습니다.</small>
                 </div>
               </c:if>
 

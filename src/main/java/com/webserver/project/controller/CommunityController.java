@@ -106,20 +106,75 @@ public class CommunityController {
   }
 
   @PostMapping("/edit/{id}")
-  public String editPasswordCheck(@PathVariable int id, 
-                                 @RequestParam String password,
-                                 RedirectAttributes redirectAttributes) {
+  @ResponseBody
+  public ResponseEntity<Map<String, Object>> editPasswordCheck(@PathVariable int id, 
+                                                              @RequestParam String password,
+                                                              HttpSession session) {
+    log.info("=== 비밀번호 검증 시작 ===");
+    log.info("게시글 ID: {}", id);
+    log.info("입력된 비밀번호: {}", password);
+    
+    Map<String, Object> response = new HashMap<>();
+    
     if (svc.validateGuestPassword(id, password)) {
-      return "redirect:/community/edit-form/" + id;
+      log.info("비밀번호 검증 성공 - 세션에 저장");
+      // 비밀번호 검증 성공 시 세션에 검증 정보 저장
+      session.setAttribute("passwordVerified_" + id, true);
+      response.put("success", true);
+      response.put("message", "비밀번호 검증 성공");
+      return ResponseEntity.ok(response);
     } else {
-      redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
-      return "redirect:/community/view/" + id;
+      log.warn("비밀번호 검증 실패");
+      response.put("success", false);
+      response.put("message", "비밀번호가 일치하지 않습니다.");
+      return ResponseEntity.badRequest().body(response);
     }
   }
 
   @GetMapping("/edit-form/{id}")
-  public String editForm(@PathVariable int id, Model m) {
-    m.addAttribute("post", svc.getWithoutViewIncrement(id));
+  public String editForm(@PathVariable int id, 
+                        HttpSession session, 
+                        Model m,
+                        RedirectAttributes redirectAttributes) {
+    log.info("=== 수정 폼 접근 ===");
+    log.info("게시글 ID: {}", id);
+    
+    CommunityPost post = svc.getWithoutViewIncrement(id);
+    if (post == null) {
+      redirectAttributes.addFlashAttribute("error", "게시글을 찾을 수 없습니다.");
+      return "redirect:/community";
+    }
+    
+    // 권한 확인
+    Integer userId = (Integer) session.getAttribute("userId");
+    String role = (String) session.getAttribute("role");
+    
+    boolean canEdit = false;
+    if ("admin".equals(role)) {
+      canEdit = true;
+    } else if (post.getAuthorId() != null && userId != null && post.getAuthorId().equals(userId)) {
+      // 로그인 사용자가 작성한 글: 작성자 본인만
+      canEdit = true;
+    } else if (post.getAuthorId() == null) {
+      // 비로그인 사용자가 작성한 글: 세션에서 비밀번호 검증 상태 확인
+      Boolean passwordVerified = (Boolean) session.getAttribute("passwordVerified_" + id);
+      log.info("세션에서 비밀번호 검증 상태: {}", passwordVerified);
+      
+      if (passwordVerified == null || !passwordVerified) {
+        log.warn("비밀번호 검증을 거치지 않고 직접 접근 시도");
+        redirectAttributes.addFlashAttribute("error", "비밀번호 검증이 필요합니다.");
+        return "redirect:/community/view/" + id;
+      }
+      canEdit = true;
+    }
+    
+    if (!canEdit) {
+      redirectAttributes.addFlashAttribute("error", "수정 권한이 없습니다.");
+      return "redirect:/community/view/" + id;
+    }
+    
+    log.info("수정 폼 페이지로 이동");
+    m.addAttribute("post", post);
     return "community-edit";
   }
 
@@ -127,7 +182,6 @@ public class CommunityController {
   public String update(@PathVariable int id,
                       @RequestParam String title,
                       @RequestParam String content,
-                      @RequestParam(required = false) String password,
                       HttpSession session,
                       RedirectAttributes redirectAttributes) {
     try {
@@ -148,10 +202,11 @@ public class CommunityController {
         // 로그인 사용자가 작성한 글: 작성자 본인만
         canUpdate = true;
       } else if (existingPost.getAuthorId() == null) {
-        // 비로그인 사용자가 작성한 글: 비밀번호 확인
-        if (password == null || !svc.validateGuestPassword(id, password)) {
-          redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
-          return "redirect:/community/edit-form/" + id;
+        // 비로그인 사용자가 작성한 글: 세션의 비밀번호 검증 상태 확인
+        Boolean passwordVerified = (Boolean) session.getAttribute("passwordVerified_" + id);
+        if (passwordVerified == null || !passwordVerified) {
+          redirectAttributes.addFlashAttribute("error", "비밀번호 검증이 필요합니다.");
+          return "redirect:/community/view/" + id;
         }
         canUpdate = true;
       }
@@ -167,6 +222,10 @@ public class CommunityController {
       post.setContent(content);
       
       svc.update(post);
+      
+      // 수정 완료 후 세션에서 비밀번호 검증 정보 제거
+      session.removeAttribute("passwordVerified_" + id);
+      
       redirectAttributes.addFlashAttribute("message", "글이 성공적으로 수정되었습니다.");
       return "redirect:/community/view/" + id;
     } catch (Exception e) {
@@ -190,6 +249,33 @@ public class CommunityController {
       }
     } else {
       redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
+      return "redirect:/community/view/" + id;
+    }
+  }
+
+  @PostMapping("/admin-delete/{id}")
+  public String adminDelete(@PathVariable int id, 
+                           HttpSession session,
+                           RedirectAttributes redirectAttributes) {
+    log.info("=== 관리자 권한 삭제 시도 ===");
+    log.info("게시글 ID: {}", id);
+    
+    // 관리자 권한 확인
+    String role = (String) session.getAttribute("role");
+    if (!"admin".equals(role)) {
+      log.warn("관리자가 아닌 사용자가 관리자 삭제 시도: {}", role);
+      redirectAttributes.addFlashAttribute("error", "관리자 권한이 필요합니다.");
+      return "redirect:/community/view/" + id;
+    }
+    
+    try {
+      svc.delete(id);
+      log.info("관리자 권한으로 게시글 {} 삭제 완료", id);
+      redirectAttributes.addFlashAttribute("message", "관리자 권한으로 글이 삭제되었습니다.");
+      return "redirect:/community";
+    } catch (Exception e) {
+      log.error("관리자 삭제 실패: ", e);
+      redirectAttributes.addFlashAttribute("error", "글 삭제에 실패했습니다: " + e.getMessage());
       return "redirect:/community/view/" + id;
     }
   }
@@ -263,10 +349,13 @@ public class CommunityController {
       
       boolean canEdit = false;
       if ("admin".equals(role)) {
+        // 관리자는 모든 댓글 수정 가능 (비밀번호 검증 없음)
         canEdit = true;
       } else if (comment.getAuthorId() != null && userId != null && comment.getAuthorId().equals(userId)) {
+        // 로그인 사용자의 본인 댓글
         canEdit = true;
       } else if (comment.getAuthorId() == null && guestPw != null && guestPw.equals(comment.getGuestPw())) {
+        // 게스트 댓글 - 비밀번호 확인
         canEdit = true;
       }
       
@@ -312,10 +401,13 @@ public class CommunityController {
       
       boolean canDelete = false;
       if ("admin".equals(role)) {
+        // 관리자는 모든 댓글 삭제 가능 (비밀번호 검증 없음)
         canDelete = true;
       } else if (comment.getAuthorId() != null && userId != null && comment.getAuthorId().equals(userId)) {
+        // 로그인 사용자의 본인 댓글
         canDelete = true;
       } else if (comment.getAuthorId() == null && guestPw != null && guestPw.equals(comment.getGuestPw())) {
+        // 게스트 댓글 - 비밀번호 확인
         canDelete = true;
       }
       

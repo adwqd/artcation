@@ -210,17 +210,16 @@ h6 {
 
   .navmenu a,
   .navmenu a:focus {
-    color: var(--nav-color);
-    padding: 8px 20px;
-    font-size: 14px;
+    color: #ffffff;
+    padding: 10px 20px;
     font-family: var(--nav-font);
-    font-weight: 400;
+    font-size: 17px;
+    font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: space-between;
     white-space: nowrap;
     transition: 0.3s;
-    border-radius: 50px;
   }
 
   .navmenu a i,
@@ -228,13 +227,28 @@ h6 {
     font-size: 12px;
     line-height: 0;
     margin-left: 5px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
     transition: 0.3s;
+    background-color: color-mix(in srgb, var(--accent-color), transparent 90%);
   }
 
-  .navmenu li:hover>a,
+  .navmenu a i:hover,
+  .navmenu a:focus i:hover {
+    background-color: var(--accent-color);
+    color: var(--contrast-color);
+  }
+
+  .navmenu a:hover,
   .navmenu .active,
   .navmenu .active:focus {
-    background-color: var(--nav-hover-color);
+    color: #ffffff !important;
+    background-color: #ff6b35;
+    border-radius: 50px;
   }
 
   .navmenu .dropdown ul {
@@ -278,21 +292,9 @@ h6 {
 
   .navmenu .dropdown:hover>ul {
     opacity: 1;
-    top: 105%;
+    top: 100%;
     visibility: visible;
-  }
-
-  .navmenu .dropdown .dropdown ul {
-    top: 0;
-    left: -90%;
-    visibility: hidden;
-  }
-
-  .navmenu .dropdown .dropdown:hover>ul {
-    opacity: 1;
-    top: 0;
-    left: -100%;
-    visibility: visible;
+    border-radius: 8px; /* 둥근 모양으로 변경 */
   }
 }
 
@@ -2725,4 +2727,28 @@ body.mobile-nav-active .navmenu li a.active,
 body.mobile-nav-active .navmenu li:last-child a,
 .mobile-nav-active .navmenu li:last-child a {
   border-bottom: none !important;
+}
+
+/* 로그인 메뉴에 영향을 주지 않도록 별도의 클래스 추가 */
+.navmenu .login-menu {
+    border-radius: initial; /* 로그인 메뉴는 기본 모양 유지 */
+    pointer-events: none; /* 로그인 메뉴는 호버 효과를 받지 않음 */
+}
+
+/* 모든 페이지에서 드롭다운 메뉴의 호버 효과 통일 - 배경색 변경 없이 글씨색만 변경 */
+.navmenu .dropdown:hover > a {
+    background-color: transparent !important;
+    color: var(--nav-hover-color) !important;
+}
+
+/* 인덱스 페이지에서도 동일한 효과 적용 */
+.index-page .navmenu .dropdown:hover > a {
+    background-color: transparent !important;
+    color: var(--nav-hover-color) !important;
+}
+
+/* 비인덱스 페이지에서도 동일한 효과 적용 */
+body:not(.index-page) .navmenu .dropdown:hover > a {
+    background-color: transparent !important;
+    color: var(--nav-hover-color) !important;
 }
